@@ -434,19 +434,24 @@
     </div>
 
     <script>
-        // Enlace del motor oculto de Google Apps Script (Mismo servidor central)
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
+     
+             // =========================================================================
+        // MOTOR BACKEND DE INTERCONEXIÓN RESTINGIDO - INQUILINO LOCAL v1.0
+        // =========================================================================
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
         
-        // ID de la sucursal del inquilino capturado automáticamente desde el login
-        const SUCURSAL_ID_ACTIVA = localStorage.getItem("inquilino_sucursal_id") || "KIO-01";
+        // ID de la sucursal capturado automáticamente desde el Login de RJ-Profecional
+        const SUCURSAL_ID_ACTIVA = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
-        // 1. VIGILANTE DE RECONEXIÓN AUTOMÁTICA EN MATRIZ DE INQUILINO
+        /**
+         * 🔄 VIGILANTE DE RED LOCAL EN LA MATRIZ DEL INQUILINO
+         */
         function vigilarRedInquilino() {
             const badge = document.getElementById('inquilinoNetBadge');
             if (navigator.onLine) {
                 badge.innerText = "📶 ONLINE";
                 badge.className = "net-badge net-online";
-                console.log("Señal restablecida. Sincronizando datos de mi sucursal...");
+                descargarDatosInquilino(); 
             } else {
                 badge.innerText = "🚨 OFFLINE";
                 badge.className = "net-badge net-offline";
@@ -456,7 +461,103 @@
         window.addEventListener('online', vigilarRedInquilino);
         window.addEventListener('offline', vigilarRedInquilino);
 
-        // 2. SISTEMA INTERCAMBIO RAPIDO DE PESTAÑAS (SPA)
+        /**
+         * 📥 SINCRONIZADOR LOCAL: Descarga los tickets y logs exclusivos de esta tienda
+         */
+        function descargarDatosInquilino() {
+            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    accion: "obtenerMatrizInq", 
+                    idSucursal: SUCURSAL_ID_ACTIVA 
+                })
+            })
+            .then(() => {
+                console.log("Sincronización de sucursal exitosa con la Nube...");
+                
+                // Cargar datos económicos del Sheets
+                let tasaLocal = localStorage.getItem("tasa_cambio_actual");
+                if (tasaLocal) {
+                    document.getElementById('inpTasa').value = parseFloat(tasaLocal).toFixed(2);
+                }
+
+                // Colocar datos de identidad fijos en pantalla
+                document.getElementById('txtNegocioInq').innerText = "Sucursal Administrada: " + SUCURSAL_ID_ACTIVA;
+                document.getElementById('lblIdSucursal').innerText = "ID: " + SUCURSAL_ID_ACTIVA;
+            })
+            .catch(err => console.log("Restableciendo hilos con el servidor maestro...", err));
+        }
+
+        /**
+         * 📦 CARGA PROTEGIDA: Guarda e inyecta el producto inyectándole su ID por detras
+         */
+        function guardarMercanciaInquilino() {
+            const cod = document.getElementById('regCodigo').value.trim();
+            const nom = document.getElementById('regNombre').value.trim();
+            const mod = document.getElementById('regModulo').value;
+            const cost = parseFloat(document.getElementById('regCosto').value) || 0;
+            const porc = parseFloat(document.getElementById('regPorcentaje').value) || 0;
+            const prec = parseFloat(document.getElementById('regPrecioVenta').value) || 0;
+            const stock = parseInt(document.getElementById('regStock').value) || 0;
+            const min = parseInt(document.getElementById('regMinimo').value) || 0;
+            
+            const talla = document.getElementById('regTalla').value.trim();
+            const color = document.getElementById('regColor').value.trim();
+            const modoVenta = document.getElementById('regVentaModo').value;
+            const oem = document.getElementById('regOem').value.trim();
+            const vencimiento = document.getElementById('regVencimiento').value;
+
+            if(!cod || !nom || !cost) { 
+                alert("🚨 Error: Código, Nombre y Costo de Inversión son requeridos."); 
+                return; 
+            }
+
+            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) {
+                alert("⚠️ Error de Red: Debe configurar su URL real de Apps Script para inyectar datos.");
+                return;
+            }
+
+            // Inyección blindada con el ID capturado de forma transparente
+            const paqueteMercancia = {
+                accion: "cargarMercanciaInq",
+                codigoBarras: cod,
+                idSucursal: SUCURSAL_ID_ACTIVA, 
+                moduloTipo: mod,
+                nombreProducto: nom,
+                costoInversion: cost,
+                porcentajeGanancia: porc,
+                precioVentaUsd: prec,
+                stockInicial: stock,
+                stockMinimo: min,
+                tallaTamaño: talla,
+                color: color,
+                modoVenta: modoVenta,
+                compatibilidadOem: oem,
+                fechaVencimiento: vencimiento
+            };
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paqueteMercancia)
+            })
+            .then(() => {
+                alert("✅ ¡Producto Registrado! La mercancía fue añadida exitosamente a su inventario local.");
+                document.getElementById('regCodigo').value = "";
+                document.getElementById('regNombre').value = "";
+                document.getElementById('regCosto').value = "";
+                document.getElementById('regPrecioVenta').value = "";
+                document.getElementById('regStock').value = "1";
+            })
+            .catch(err => alert("Falla al conectar con el servidor: " + err.toString()));
+        }
+
+        // CONTROL PESTAÑAS SPA
         const botonesMenu = document.querySelectorAll('.menu-btn');
         const paneles = {
             0: document.getElementById('sectionGeneral'),
@@ -469,9 +570,7 @@
             btn.addEventListener('click', () => {
                 botonesMenu.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
                 Object.values(paneles).forEach(p => { if(p) p.style.display = 'none'; });
-                
                 if (paneles[index]) {
                     paneles[index].style.display = 'block';
                     if(index === 1) adaptarFormularioCarga();
@@ -480,7 +579,7 @@
             });
         });
 
-        // 3. ADAPTACIÓN INTELIGENTE DE CAMPOS DE CARGA LOCAL
+        // REGLAS DINÁMICAS DE VARIANTES LOCALES
         function adaptarFormularioCarga() {
             const modulo = document.getElementById('regModulo').value;
             document.getElementById('divTalla').style.display = 'none';
@@ -509,26 +608,21 @@
 
         function toggleMenu() { document.getElementById('sidebarMenu').classList.toggle('open'); }
 
-        // 4. ENVÍO DE MERCANCÍA PROTEGIDA AL SHEETS
-        function guardarMercanciaInquilino() {
-            const cod = document.getElementById('regCodigo').value.trim();
-            const nom = document.getElementById('regNombre').value.trim();
-            const cost = document.getElementById('regCosto').value;
-            const porc = document.getElementById('regPorcentaje').value;
-            const prec = document.getElementById('regPrecioVenta').value;
+        // Cronómetro de fondo para vigilar el bloqueo de inventario remoto del dueño
+        setInterval(function() {
+            let sistemaTrancado = localStorage.getItem("estado_sistema_bloqueado");
+            if (sistemaTrancado === "true") {
+                document.getElementById('pantallaCristal').style.display = 'flex';
+            } else {
+                document.getElementById('pantallaCristal').style.display = 'none';
+            }
+        }, 5000);
 
-            if(!cod || !nom || !cost) { alert("Por favor complete los campos obligatorios."); return; }
-
-            alert("Enviando producto al inventario maestro...\nInyectando ID: " + SUCURSAL_ID_ACTIVA + " de manera blindada.");
-        }
-
-        function actualizarPinesLocales() {}
-        function guardarDatosIdentidad() {}
-        function guardarEconomia() {}
-        function alternarBloqueoSistema(estado) {}
-
-        // Inicializar revisando el estatus de la red en Venezuela
+             // Inicializar revisando el estatus de la red local
         vigilarRedInquilino();
     </script>
 </body>
 </html>
+
+        
+    

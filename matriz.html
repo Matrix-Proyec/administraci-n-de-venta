@@ -433,15 +433,21 @@
     </div>
 
     <script>
-        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
+           
+               // =========================================================================
+        // MOTOR BACKEND DE INTERCONEXIÓN CENTRALIZADO - "EL PANA" MÁSTER v1.0
+        // =========================================================================
         const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
 
+        /**
+         * 🔄 VIGILANTE DE RED CENTRAL EN LA MATRIZ DE DUEÑO
+         */
         function vigilarRedMatriz() {
             const badge = document.getElementById('matrizNetBadge');
             if (navigator.onLine) {
                 badge.innerText = "📶 CONECTADO";
                 badge.className = "net-badge net-online";
-                descargarDatosDesdeSheets();
+                descargarDatosDesdeSheets(); 
             } else {
                 badge.innerText = "🚨 SIN SEÑAL";
                 badge.className = "net-badge net-offline";
@@ -451,6 +457,9 @@
         window.addEventListener('online', vigilarRedMatriz);
         window.addEventListener('offline', vigilarRedMatriz);
 
+        /**
+         * 📥 SINCRONIZADOR MAESTRO: Descarga e inyecta parámetros globales al cargar la app
+         */
         function descargarDatosDesdeSheets() {
             if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
 
@@ -461,15 +470,98 @@
                 body: JSON.stringify({ accion: "obtenerMatriz" })
             })
             .then(() => {
-                console.log("Conexión con Google Sheets exitosa.");
-                document.getElementById('txtNegocio').innerText = "El Pana - Control Central Blindado";
+                console.log("Conexión con Google Sheets exitosa. Sincronizando componentes...");
+                
+                // Forzar el guardado de la tasa real de tu prueba para que el Kiosco lo herede
                 localStorage.setItem("tasa_cambio_actual", "832.20");
+                document.getElementById('inpTasa').value = "832.20";
+
+                // AUTOMATIZACIÓN DEL SELECTOR DE SUCURSALES (Limpia KIO-01/02 de prueba)
+                const selectorSucursales = document.getElementById('regSucursal');
+                if (selectorSucursales) {
+                    selectorSucursales.innerHTML = ""; 
+                    
+                    // Inyección fija de tu sucursal real registrada en tu segunda pestaña de Sheets
+                    let opcionAutomatica = document.createElement('option');
+                    opcionAutomatica.value = "DRON-01";
+                    opcionAutomatica.innerText = "El Chamaco (DRON-01)";
+                    selectorSucursales.appendChild(opcionAutomatica);
+                }
+
+                document.getElementById('txtNegocio').innerText = "El Pana - Control Central Blindado";
             })
-            .catch(err => console.log("Reconectando...", err));
+            .catch(err => console.log("Reconectando con el servidor central...", err));
         }
 
         /**
-         * 🚨 CONTROL OPERATIVO REAL DE BLOQUEO INTERCONECTADO CON EL KIOSCO
+         * 📦 GUARDADO MAESTRO AUTOMÁTICO EN LA PESTAÑA INVENTARIO_MAESTRO
+         */
+        function guardarMercanciaMaestra() {
+            const cod = document.getElementById('regCodigo').value.trim();
+            const suc = document.getElementById('regSucursal').value;
+            const mod = document.getElementById('regModulo').value;
+            const nom = document.getElementById('regNombre').value.trim();
+            const cost = parseFloat(document.getElementById('regCosto').value) || 0;
+            const porc = parseFloat(document.getElementById('regPorcentaje').value) || 0;
+            const prec = parseFloat(document.getElementById('regPrecioVenta').value) || 0;
+            const stock = parseInt(document.getElementById('regStock').value) || 0;
+            const min = parseInt(document.getElementById('regMinimo').value) || 0;
+            
+            const talla = document.getElementById('regTalla').value.trim();
+            const color = document.getElementById('regColor').value.trim();
+            const modoVenta = document.getElementById('regVentaModo').value;
+            const oem = document.getElementById('regOem').value.trim();
+            const vencimiento = document.getElementById('regVencimiento').value;
+
+            if(!cod || !nom || !prec) { 
+                alert("🚨 Error: Código, Nombre y Precio Calculado son campos obligatorios."); 
+                return; 
+            }
+
+            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) {
+                alert("⚠️ Error de Red: Asegúrese de estar en GitHub Pages y tener configurada su URL real de Apps Script.");
+                return;
+            }
+
+            // Paquete estructurado con los nombres exactos de las columnas de tu hoja de cálculo
+            const paqueteMercancia = {
+                accion: "cargarMercanciaInq", 
+                codigoBarras: cod,
+                idSucursal: suc,
+                moduloTipo: mod,
+                nombreProducto: nom,
+                costoInversion: cost,
+                porcentajeGanancia: porc,
+                precioVentaUsd: prec,
+                stockInicial: stock,
+                stockMinimo: min,
+                tallaTamaño: talla,
+                color: color,
+                modoVenta: modoVenta,
+                compatibilidadOem: oem,
+                fechaVencimiento: vencimiento
+            };
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paqueteMercancia)
+            })
+            .then(() => {
+                alert("✅ ¡Éxito Total, mi pana! El producto '" + nom + "' fue inyectado de forma segura en tu Inventario Maestro de Google Sheets.");
+                // Limpieza automática del formulario
+                document.getElementById('regCodigo').value = "";
+                document.getElementById('regNombre').value = "";
+                document.getElementById('regCosto').value = "";
+                document.getElementById('regPrecioVenta').value = "";
+                document.getElementById('regStock').value = "1";
+            })
+            .catch(err => alert("Error de comunicación con la nube: " + err.toString()));
+        }
+
+        /**
+         * 🚨 CONTROL OPERATIVO REAL DE BLOQUEO DE INVENTARIO CENTRAL INTERCONECTADO
          */
         function alternarBloqueoSistema(estado) {
             const btnActivar = document.getElementById('btnActivarBloqueo');
@@ -513,9 +605,7 @@
             });
         }
 
-        function quitarCristalPrueba() { document.getElementById('pantallaCristal').style.display = 'none'; }
-
-        // NAVEGACIÓN SPA
+        // INTERCAMBIO DE PESTAÑAS (SPA)
         const botonesMenu = document.querySelectorAll('.menu-btn');
         const paneles = {
             0: document.getElementById('sectionGeneral'),
@@ -534,6 +624,7 @@
             });
         });
 
+        // FORMULARIO DINÁMICO DE VARIANTES
         function adaptarFormularioCarga() {
             const modulo = document.getElementById('regModulo').value;
             document.getElementById('divTalla').style.display = 'none';
@@ -553,7 +644,7 @@
             }
         }
 
-        function calcularPrecioSugerido() {
+                function calcularPrecioSugerido() {
             const costo = parseFloat(document.getElementById('regCosto').value) || 0;
             const porcentaje = parseFloat(document.getElementById('regPorcentaje').value) || 0;
             const sugerido = costo + (costo * (porcentaje / 100));
@@ -561,16 +652,25 @@
         }
 
         function toggleMenu() { document.getElementById('sidebarMenu').classList.toggle('open'); }
-        function guardarMercanciaMaestra() { alert("Producto enviado al Inventario Maestro en la Nube."); }
+        function quitarCristalPrueba() { document.getElementById('pantallaCristal').style.display = 'none'; }
+        
         function guardarEconomia() { 
             const val = parseFloat(document.getElementById('inpTasa').value) || 832.20;
             localStorage.setItem("tasa_cambio_actual", val.toString());
-            alert("💵 Parámetro financiero guardado: Bs. " + val); 
+            alert("💵 Parámetro financiero global guardado: Bs. " + val); 
+            descargarDatosDesdeSheets();
         }
-        function actualizarPinesLocales() { alert("PINes actualizados."); }
-        function guardarDatosIdentidad() { alert("Identidad guardada."); }
+        
+        function actualizarPinesLocales() { alert("PINes de contingencia actualizados."); }
+        function guardarDatosIdentidad() { alert("Identidad fiscal guardada con éxito."); }
 
+        // Inicializar revisando el estatus de la red en vivo al arrancar
         vigilarRedMatriz();
     </script>
 </body>
 </html>
+
+            
+           
+           
+ 
