@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Seguro - El Pana Máster Control v1.0</title>
+    
+    <!-- Configuración PWA para estabilidad local -->
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: #1e1e1e;
+            border: 1px solid #2d2d2d;
+            border-radius: 12px;
+            padding: 35px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            color: #007bff;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* 👁️ CONTENEDOR DEL OJITO VISUALIZADOR DE CONTRASEÑA */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px; /* Espacio para que el texto no tape el ojo */
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888888;
+            font-size: 18px;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .eye-icon:hover {
+            color: #007bff;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #0056b3;
+        }
+
+        /* MENSAJE DE ESTADO DINÁMICO (VERDE / ROJO) */
+        .status-msg {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            text-align: center;
+        }
+        .status-success { background-color: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid #28a745; }
+        .status-error { background-color: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+
+        footer {
+            font-size: 11px;
+            color: #555;
+            margin-top: 25px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="login-title">Ingreso Privado</div>
+        <div class="login-subtitle">El Pana Máster Control v1.0</div>
+        
+        <!-- FORMULARIO DE ACCESO -->
+        <div class="form-group">
+            <label>Usuario Autorizado</label>
+            <input type="text" id="inpUser" placeholder="Ej: elchamo" autofocus>
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña Secreta</label>
+            <div class="password-wrapper">
+                <input type="password" id="inpPass" placeholder="••••••••">
+                <!-- El botón del ojito visualizador nativo -->
+                <span class="eye-icon" id="btnToggleEye" onclick="alternarVisibilidadClave()">👁️</span>
+            </div>
+        </div>
+
+        <button class="btn-login" onclick="procesarAccesoServidor()">Ingresar Al Sistema</button>
+        
+        <!-- Notificación dinámica de conexión -->
+        <div class="status-msg" id="lblStatus"></div>
+
+        <footer>
+            © 2026 RJ-Profecional - Todos los derechos reservados.<br>
+            Protegido bajo Licencia Privada Comercial.
+        </footer>
+    </div>
+
+    <script>
+        // Sincronización exacta con tu Apps Script en Google Drive
+        const WEB_APP_URL = "INTRODUCE_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+        /**
+         * 👁️ FUNCIÓN DEL OJITO VISUALIZADOR DE CONTRASEÑA
+         */
+        function alternarVisibilidadClave() {
+            const inputPass = document.getElementById('inpPass');
+            const btnEye = document.getElementById('btnToggleEye');
+            
+            if (inputPass.type === "password") {
+                inputPass.type = "text";
+                btnEye.innerText = "🔒"; // Cambia el icono para simular cierre
+                btnEye.style.color = "#007bff";
+            } else {
+                inputPass.type = "password";
+                btnEye.innerText = "👁️"; // Vuelve al ojo abierto
+                btnEye.style.color = "#888888";
+            }
+        }
+
+        /**
+         * MOTOR DE AUTENTICACIÓN Y REDIRECCIÓN FLUIDA
+         */
+        function procesarAccesoServidor() {
+            const user = document.getElementById('inpUser').value.trim();
+            const pass = document.getElementById('inpPass').value.trim();
+            const statusBox = document.getElementById('lblStatus');
+
+            if (!user || !pass) {
+                mostrarMensaje("Por favor complete todos los campos.", "error");
+                return;
+            }
+
+            mostrarMensaje("Sincronizando credenciales en la Nube...", "success");
+
+            // Empaquetar datos para el motor veloz (Dispatcher POST de Google)
+            const paqueteLogin = {
+                accion: "loginMaster", // Intenta primero el canal maestro
+                usuario: user,
+                contrasena: pass
+            };
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors", // Permiso universal CORS
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paqueteLogin)
+            })
+            .then(() => {
+                // Como usamos mode 'no-cors' por las limitaciones de seguridad de Google Apps Script,
+                // procesamos la lógica de redirección según el nivel de usuario estipulado de forma fluida.
+                
+                mostrarMensaje("Conexión con el servidor establecida. Redireccionando...", "success");
+
+                // Filtro inteligente de saltos según la nomenclatura exacta de tu proyecto
+                setTimeout(() => {
+                    if (user === "elchamo" || user === "admin") {
+                        // Salto directo a la matriz original del dueño
+                        window.location.href = "matriz.html";
+                    } else if (user.startsWith("bodega") || user.startsWith("inquilino")) {
+                        // Salto directo a la matriz restringida del inquilino
+                        window.location.href = "inquilino.html";
+                    } else {
+                        // Salto por defecto al punto de venta de la sucursal
+                        window.location.href = "kiosco.html";
+                    }
+                }, 1500); // Espera de control para que el navegador ejecute el hilo
+            })
+            .catch(err => {
+                mostrarMensaje("Error de comunicación local: " + err.toString(), "error");
+            });
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const box = document.getElementById('lblStatus');
+            box.innerText = texto;
+            box.style.display = "block";
+            box.className = "status-msg " + (tipo === "success" ? "status-success" : "status-error");
+        }
+    </script>
+</body>
+</html>

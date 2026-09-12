@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta - Kiosco Blindado Anti-Fallas</title>
+    
+    <!-- Configuración básica para simular PWA nativa en Teléfonos y PC -->
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <style>
+        /* ========================================================================= */
+        /* ESTILOS DE INTERFAZ PROFESIONAL OSCURA (ENTORNO KIOSCO)                  */
+        /* ========================================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ENCABEZADO DE CAJA */
+        .navbar-kiosco {
+            background-color: #1e1e1e;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d2d2d;
+        }
+
+        .kiosco-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        /* ALERTA DE SEÑAL DE INTERNET EN ENCABEZADO */
+        .status-internet-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 15px;
+            display: inline-block;
+        }
+        .online-status { background-color: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
+        .offline-status { background-color: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid #dc3545; animation: parpadeo 1.5s infinite; }
+
+        @keyframes parpadeo {
+            0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
+        }
+
+        /* RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE */
+        .tasa-master-box {
+            background-color: #1a2436;
+            border: 2px solid #007bff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #007bff;
+            text-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* DISPOSICIÓN DE PANTALLA GENERAL */
+        .pos-container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .area-catalogo {
+            flex: 1.3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .area-carrito {
+            flex: 0.9;
+            background-color: #1e1e1e;
+            border: 1px solid #2d2d2d;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .panel-selector {
+            background-color: #1e1e1e;
+            border: 1px solid #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 1px solid #3d3d3d;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        select:focus, input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* INTERFAZ DE SWITCHES DESLIZANTES MODERNOS (GRIS/AZUL) */
+        .config-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .switch-control {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch-control input { display: none; }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #444444;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-round {
+            background-color: #007bff;
+        }
+
+        input:checked + .slider-round:before {
+            transform: translateX(24px);
+        }
+
+        /* MONITOR ACTIVO DE LA CALCULADORA EN VIVO */
+        .tabla-productos-box {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 240px;
+            margin: 15px 0;
+            border: 1px solid #2d2d2d;
+            border-radius: 6px;
+            background-color: #151515;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #222;
+            font-size: 14px;
+        }
+
+        .btn-delete-item {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 5px;
+        }
+
+        /* PANEL TOTALIZADOR BIMONEDA */
+        .totales-box {
+            background-color: #121212;
+            border: 1px solid #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .monto-usd {
+            font-size: 32px;
+            font-weight: 800;
+            color: #28a745;
+        }
+
+        .monto-bs {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-pay:hover { background-color: #218838; }
+
+        .caja-control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-caja {
+            padding: 12px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* COLA DE ESPERA EN COLA DE CARGA DE VENTAS DISCONECTADAS */
+        .sync-warning-box {
+            background-color: #3d2a1a;
+            border: 1px solid #ff9800;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #ff9800;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* ENTORNO DE BLOQUEO CRISTALIZADO */
+        .cristal-bloqueo {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mensaje-bloqueo-kio {
+            background-color: rgba(30,30,30,0.9);
+            border: 1px solid #3d3d3d;
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 900px) {
+            .pos-container { flex-direction: column; }
+            .tasa-master-box { font-size: 18px; padding: 6px 12px; }
+            .kiosco-title { font-size: 15px; }
+        }
+
+        /* ========================================================================= */
+        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET 58MM O 80MM)       */
+        /* ========================================================================= */
+        @media print {
+            body *, .navbar-kiosco, .panel-selector, .btn-pay, footer, .btn-delete-item, select, .sync-warning-box {
+                display: none !important;
+            }
+
+            body, .area-carrito, .tabla-productos-box, .totales-box, .item-row {
+                display: block !important;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            @page {
+                size: 58mm auto;
+                margin: 0mm;
+            }
+
+                 .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #222;
+            font-size: 14px;
+        }
+
+        .btn-delete-item {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 5px;
+        }
+
+        /* PANEL TOTALIZADOR BIMONEDA */
+        .totales-box {
+            background-color: #121212;
+            border: 1px solid #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .monto-usd {
+            font-size: 32px;
+            font-weight: 800;
+            color: #28a745;
+        }
+
+        .monto-bs {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 5px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-pay:hover { background-color: #218838; }
+
+        .caja-control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-caja {
+            padding: 12px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* COLA DE ESPERA EN COLA DE CARGA DE VENTAS DISCONECTADAS */
+        .sync-warning-box {
+            background-color: #3d2a1a;
+            border: 1px solid #ff9800;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #ff9800;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* ENTORNO DE BLOQUEO CRISTALIZADO */
+        .cristal-bloqueo {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mensaje-bloqueo-kio {
+            background-color: rgba(30,30,30,0.9);
+            border: 1px solid #3d3d3d;
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 900px) {
+            .pos-container { flex-direction: column; }
+            .tasa-master-box { font-size: 18px; padding: 6px 12px; }
+            .kiosco-title { font-size: 15px; }
+        }
+
+        /* ========================================================================= */
+        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET 58MM O 80MM)       */
+        /* ========================================================================= */
+        @media print {
+            body *, .navbar-kiosco, .panel-selector, .btn-pay, footer, .btn-delete-item, select, .sync-warning-box {
+                display: none !important;
+            }
+
+            body, .area-carrito, .tabla-productos-box, .totales-box, .item-row {
+                display: block !important;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            @page {
+                size: 58mm auto;
+                margin: 0mm;
+            }
+
+            .item-row {
+                display: flex !important;
+                justify-content: space-between !important;
+                border-bottom: 1px dashed #000000 !important;
+                padding: 4px 0 !important;
+                font-family: 'Courier New', Courier, monospace !important;
+                font-size: 12px !important;
+            }
+
+            .totales-box {
+                text-align: right !important;
+                font-family: 'Courier New', Courier, monospace !important;
+                border-top: 2px solid #000000 !important;
+                margin-top: 8px !important;
+                padding-top: 4px !important;
+            }
+
+            .monto-usd {
+                font-size: 16px !important;
+                color: #000000 !important;
+                font-weight: bold !important;
+            }
+
+            .monto-bs {
+                font-size: 13px !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar-kiosco">
+        <div>
+            <div class="kiosco-title" id="lblNombreKiosco">🏪 SUCURSAL: BODEGA EL CHAMO</div>
+            <span id="internetStatus" class="status-internet-badge online-status">⚡ CONECTADO (ONLINE)</span>
+            <span style="font-size:12px; color:#888;">Caja #1</span>
+        </div>
+        <div class="tasa-master-box" id="tasaCaja">💵 Tasa del Día: Bs. 45.50</div>
+    </div>
+
+    <div class="pos-container">
+        <div class="area-catalogo">
+            <div class="panel-selector">
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>Módulo de Venta Individual Activo</label>
+                    <select id="selModuloKiosco" onchange="cambiarModuloLógica()">
+                        <option value="Alimentos">🍎 Alimentos (Víveres / Abarrotes)</option>
+                        <option value="Comidas">🍔 Comidas (Restaurante / Cafetería)</option>
+                        <option value="Bebidas">🥤 Bebidas</option>
+                        <option value="Repuestos_Elec">⚙️ Repuestos Electrónicos y Accesorios</option>
+                        <option value="Repuestos_Moto">🏍️ Repuestos para Motos</option>
+                        <option value="Embutidos">🧀 Embutidos</option>
+                        <option value="Heladeria">🍦 Heladería</option>
+                        <option value="Ropa_Calzado">👕 Ropa y Calzado</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Escanear Código / Entrada de Peso o Cantidad</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="inpBuscadorCod" placeholder="Pase el lector USB o digite código..." autofocus>
+                        <input type="number" id="inpPesoManual" placeholder="Cant" value="1" style="max-width:130px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-selector">
+                <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fff; border-bottom:1px solid #333; padding-bottom:5px;">⚙️ Configuración y Switches Locales</div>
+                
+                <div class="config-row">
+                    <div>
+                        <strong style="font-size:13px; color:#fff;">Pausar Módulo de Ventas</strong><br>
+                        <span style="font-size:11px; color:#888;">Bloquea localmente el terminal por seguridad</span>
+                    </div>
+                    <label class="switch-control">
+                        <input type="checkbox" id="swBloqueoLocal" onchange="controlSwBloqueoLocal()">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <div>
+                        <strong style="font-size:13px; color:#fff;">Modo de Vista Catálogo</strong><br>
+                        <span style="font-size:11px; color:#888;">Apagado: Lista | Encendido: Cuadrícula (Grid)</span>
+                    </div>
+                    <label class="switch-control">
+                        <input type="checkbox" id="swModoVista">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <div>
+                        <strong style="font-size:13px; color:#fff;">Impresión Automática de Tickets</strong><br>
+                        <span style="font-size:11px; color:#888;">Dispara la ticketera al procesar el pago</span>
+                    </div>
+                    <label class="switch-control">
+                        <input type="checkbox" id="swImpresionAuto" checked>
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="panel-selector">
+                <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:5px;">🕒 Control de Jornada de Caja</div>
+                <div class="caja-control-grid">
+                    <button class="btn-caja" style="background-color:#28a745;" onclick="gestionarCaja('abrir')">🏁 Iniciar Caja</button>
+                    <button class="btn-caja" style="background-color:#dc3545;" onclick="gestionarCaja('cerrar')">🛑 Cierre de Caja</button>
+                </div>
+            </div>
+        </div>
+
+             <!-- ÁREA DERECHA: CALCULADORA Y TOTALES -->
+        <div class="area-carrito">
+            <div style="font-size:15px; font-weight:700; color:#ffffff; border-bottom:1px solid #333; padding-bottom:10px;">🛒 Detalle de la Venta / Monitor Activo</div>
+            
+            <div class="sync-warning-box" id="syncAlert">⚠️ MODO FUERA DE LÍNEA: Hay <span id="queueCount">0</span> ventas resguardadas esperando señal...</div>
+
+            <div class="tabla-productos-box">
+                <!-- Se llena dinámicamente mediante JavaScript -->
+            </div>
+
+            <div class="totales-box">
+                <label style="text-align:right;">TOTAL GENERAL EN DIVISAS</label>
+                <div class="monto-usd" id="lblTotalUsd">$ 0.00</div>
+                <label style="text-align:right; margin-top:10px;">EQUIVALENTE EN BOLÍVARES</label>
+                <div class="monto-bs" id="lblTotalBs">Bs. 0.00</div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Método de Pago Seleccionado</label>
+                <select id="selMetodoPago">
+                    <option value="Pago_Movil">📲 Pago Móvil Venezolano</option>
+                    <option value="Efectivo_Dolar">💵 Efectivo ($ Dólares)</option>
+                    <option value="Efectivo_Bs">💱 Efectivo (Bolívares)</option>
+                    <option value="Punto_Debito">💳 Punto de Venta / Débito</option>
+                    <option value="Biopago_Huella">👤 Biopago / Huella Digital</option>
+                    <option value="Credito_Fiar">📝 Cuenta a Crédito (Fiar Autorizado)</option>
+                </select>
+            </div>
+
+            <button class="btn-pay" onclick="procesarPagoCobro()">Emitir Factura e Imprimir Ticket</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA FLOTANTE CON EFECTO CRISTALIZADO DE PAUSA LOCAL -->
+    <div class="cristal-bloqueo" id="capaBloqueoLocal">
+        <div class="mensaje-bloqueo-kio">
+            <h2 style="color:#dc3545; font-size:22px; margin-bottom:15px; text-transform:uppercase;">Terminal En Pausa</h2>
+            <p style="font-size:15px; color:#fff; margin-bottom:20px;">Módulo pausado temporalmente por administración local. Introduzca el PIN autorizado para reanudar operaciones.</p>
+            <input type="password" id="inpPinDesbloqueo" placeholder="Introduzca PIN de 6 dígitos" style="text-align:center; max-width:220px; margin-bottom:20px;">
+            <button class="btn-pay" style="padding:10px 20px; font-size:14px;" onclick="verificarDesbloqueoLocal()">Desbloquear Caja</button>
+        </div>
+    </div>
+
+    <footer style="background-color:#1e1e1e; padding:10px; border-top:1px solid #2d2d2d; text-align:center; font-size:12px; color:#666;" id="footerAppWeb">
+        © 2026 Corporación El Chamo - Todos los derechos reservados.
+    </footer>
+
+    <script>
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
+        const TASA_CAMBIO_FIJA = 45.50;
+        let CARRITO_ACTUAL = [];
+        let IS_ONLINE = true;
+
+        const PRODUCTOS_MUESTRA = {
+            Alimentos: [
+                { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20, modo: "Unidad" },
+                { cod: "7591112223334", nombre: "Harina Pan 1Kg", precio: 1.10, modo: "Unidad" }
+            ],
+            Comidas: [{ cod: "COM-01", nombre: "Hamburguesa Especial", precio: 5.50, modo: "Unidad" }],
+            Bebidas: [{ cod: "BEB-01", nombre: "Refresco Coca-Cola 2L", precio: 2.50, modo: "Unidad" }],
+            Repuestos_Elec: [{ cod: "7598889990001", nombre: "Radio Portátil Recargable", precio: 15.00, modo: "Unidad" }],
+            Repuestos_Moto: [{ cod: "MOT-01", nombre: "Pastillas de Freno Owen", precio: 4.50, modo: "Unidad" }],
+            Embutidos: [{ cod: "EMB-01", nombre: "Jamón Ahumado Superior", precio: 7.00, modo: "Kilo" }],
+            Heladeria: [{ cod: "HEL-01", nombre: "Barquilla Mantecado", precio: 1.50, modo: "Unidad" }],
+            Ropa_Calzado: [{ cod: "ROP-01", nombre: "Franela Básica Azul M", precio: 12.00, modo: "Unidad" }]
+        };
+
+        function actualizarEstadoRed() {
+            IS_ONLINE = navigator.onLine;
+            const badge = document.getElementById('internetStatus');
+            
+            if (IS_ONLINE) {
+                badge.innerText = "⚡ CONECTADO (ONLINE)";
+                badge.className = "status-internet-badge online-status";
+                procesarColaEspera();
+            } else {
+                badge.innerText = "🚨 SIN SEÑAL (OFFLINE)";
+                badge.className = "status-internet-badge offline-status";
+                document.getElementById('syncAlert').style.display = "block";
+            }
+            verificarContadorCola();
+        }
+
+        window.addEventListener('online', actualizarEstadoRed);
+        window.addEventListener('offline', actualizarEstadoRed);
+
+        function resguardarVentaEnCola(datosVenta) {
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            cola.push(datosVenta);
+            localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
+            verificarContadorCola();
+        }
+
+        function verificarContadorCola() {
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            const alerta = document.getElementById('syncAlert');
+            const contador = document.getElementById('queueCount');
+            
+            if (cola.length > 0) {
+                alerta.style.display = "block";
+                contador.innerText = cola.length;
+            } else if (IS_ONLINE) {
+                alerta.style.display = "none";
+            }
+        }
+
+        function procesarColaEspera() {
+            if (!navigator.onLine) return;
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            if (cola.length === 0) return;
+
+            const venta = cola[0];
+            
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(venta)
+            }).then(() => {
+                cola.shift();
+                localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
+                verificarContadorCola();
+                procesarColaEspera();
+            }).catch(e => console.log("Señal inestable, reintentando luego...", e));
+        }
+
+        document.getElementById('inpBuscadorCod').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const codigo = this.value.trim();
+                const modulo = document.getElementById('selModuloKiosco').value;
+                const cantPeso = parseFloat(document.getElementById('inpPesoManual').value) || 1;
+
+                if (!codigo) return;
+
+                const catalogo = PRODUCTOS_MUESTRA[modulo];
+                const producto = catalogo.find(p => p.cod === codigo);
+
+                if (producto) {
+                    const itemExistente = CARRITO_ACTUAL.find(item => item.cod === producto.cod);
+                    if (itemExistente) { itemExistente.cantidad += cantPeso; } 
+                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cantPeso, modulo: modulo }); }
+                    renderizarCarrito();
+                } else {
+                    alert("🚨 Producto no registrado en simulación offline.");
+                }
+                this.value = ""; 
+            }
+        });
+
+        function renderizarCarrito() {
+            const caja = document.querySelector('.tabla-productos-box');
+            caja.innerHTML = "";
+            let usd = 0;
+
+            if (CARRITO_ACTUAL.length === 0) {
+                caja.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">Monitor vacío. Pase mercancía.</div>';
+                document.getElementById('lblTotalUsd').innerText = "$ 0.00";
+                document.getElementById('lblTotalBs').innerText = "Bs. 0.00";
+                return;
+            }
+
+            CARRITO_ACTUAL.forEach((item, index) => {
+                const total = item.precio * item.cantidad;
+                usd += total;
+                caja.innerHTML += `
+                    <div class="item-row">
+                        <div><strong>${item.nombre}</strong><br><span style="color:#aaa; font-size:12px;">${item.cantidad.toFixed(2)} x $${item.precio.toFixed(2)}</span></div>
+                        <div><span style="font-weight:bold; color:#fff; margin-right:15px;">$${total.toFixed(2)}</span><button class="btn-delete-item" onclick="eliminarItemCarro(${index})">✕</button></div>
+                    </div>`;
+            });
+
+            document.getElementById('lblTotalUsd').innerText = "$ " + usd.toFixed(2);
+            document.getElementById('lblTotalBs').innerText = "Bs. " + (usd * TASA_CAMBIO_FIJA).toFixed(2);
+        }
+
+        function eliminarItemCarro(index) {
+            const pin = prompt("PIN Autorizado:");
+            if (pin === "123456") { CARRITO_ACTUAL.splice(index, 1); renderizarCarrito(); }
+        }
+
+        function procesarPagoCobro() {
+            if(CARRITO_ACTUAL.length === 0) return;
+            const usd = parseFloat(document.getElementById('lblTotalUsd').innerText.replace("$ ", ""));
+            const metodo = document.getElementById('selMetodoPago').value;
+
+            const datosVenta = {
+                accion: "procesarVentaKio",
+                idSucursal: "KIO-01",
+                operador: "Caja #1",
+                tasaCambio: TASA_CAMBIO_FIJA,
+                metodoPago: metodo,
+                totalUsd: usd,
+                carrito: CARRITO_ACTUAL,
+                pagadoUsd: metodo === "Efectivo_Dolar" ? usd : 0,
+                pagadoBs: metodo !== "Efectivo_Dolar" ? (usd * TASA_CAMBIO_FIJA) : 0,
+                vuelto: 0
+            };
+
+                    if (navigator.onLine) {
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datosVenta)
+                }).then(() => {
+                    alert("✅ Venta procesada online y guardada en la Nube.");
+                }).catch(() => {
+                    resguardarVentaEnCola(datosVenta);
+                    alert("⚠️ Red inestable. Venta resguardada en la PC. Se sincronizará sola al volver la señal.");
+                });
+            } else {
+                resguardarVentaEnCola(datosVenta);
+                alert("💾 MODALIDAD OFFLINE: Venta guardada en la memoria local de la PC de forma segura.");
+            }
+
+            // Disparar la orden física de impresión (Aprovecha la PWA para imprimir sin internet)
+            if (document.getElementById('swImpresionAuto').checked) {
+                window.print();
+            }
+
+            CARRITO_ACTUAL = [];
+            renderizarCarrito();
+        }
+
+        function cambiarModuloLógica() {}
+        function controlSwBloqueoLocal() { if (document.getElementById('swBloqueoLocal').checked) document.getElementById('capaBloqueoLocal').style.display = 'flex'; }
+        function verificarDesbloqueoLocal() { if (document.getElementById('inpPinDesbloqueo').value === "123456") { document.getElementById('capaBloqueoLocal').style.display = 'none'; document.getElementById('swBloqueoLocal').checked = false; document.getElementById('inpPinDesbloqueo').value = ""; } }
+        function gestionarCaja(accion) { alert(accion === 'abrir' ? "Caja iniciada." : "Caja cerrada."); }
+
+        // Inicializar revisando el estatus de la red en Venezuela
+        actualizarEstadoRed();
+        renderizarCarrito();
+    </script>
+</body>
+</html>
+
+            
+            
+            
