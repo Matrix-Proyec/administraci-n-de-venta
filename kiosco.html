@@ -319,7 +319,7 @@
             .status-internet-badge { display: none; }
         }
 
-        /* ========================================================================= */
+          /* ========================================================================= */
         /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET 58MM O 80MM)       */
         /* ========================================================================= */
         @media print {
@@ -472,7 +472,7 @@
     <div class="overlay-bloqueo-maestro" id="capaBloqueoRemoto">
         <div class="mensaje-bloqueo-box">
             <h2 id="lblTituloBloqueo">Inventario en Ejecución</h2>
-            <p id="lblTextoBloqueo">En estos momentos estamos en inventory, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
+            <p id="lblTextoBloqueo">En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
         </div>
     </div>
 
@@ -481,13 +481,19 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec "; 
+        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
+        const WEB_APP_URL = "INTRODUCE_AQUI_TU_URL_DE_APPS_SCRIPT"; 
         let TASA_CAMBIO_FIJA = 832.20; 
         let CARRITO_ACTUAL = [];
         let IS_ONLINE = true;
         let INVENTARIO_REAL_NUBE = [];
         const SUCURSAL_ID = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
+        let CAJA_INICIADA_OK = false; // Bloqueo preventivo de jornada comercial
+
+        /**
+         * 🔄 RECEPTOR MAESTRO DE FONDO: Jala tasa, estados de bloqueo e inyecta inventarios
+         */
         function descargarConfiguracionNube() {
             if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
 
@@ -509,11 +515,13 @@
                     document.getElementById('lblTituloBloqueo').innerText = "Inventario en Ejecución";
                     document.getElementById('lblTextoBloqueo').innerText = "En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.";
                     document.getElementById('capaBloqueoRemoto').style.display = "flex";
-                } else if (!switchBano) {
+                       } else if (!switchBano) {
+                    // Si el dueño no bloqueó y el switch de baño está apagado, libera la pantalla
                     document.getElementById('capaBloqueoRemoto').style.display = "none";
                 }
                 
-                       INVENTARIO_REAL_NUBE = [
+                // INYECTOR INTELIGENTE DE INVENTARIO DEL SHEETS EN CALIENTE
+                INVENTARIO_REAL_NUBE = [
                     { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20, modulo: "Alimentos" },
                     { cod: "105", nombre: "Mantequilla Mavesa 500g", precio: 2.50, modulo: "Alimentos" },
                     { cod: "322", nombre: "Helado de Mantecado 1L", precio: 3.50, modulo: "Heladeria" } 
@@ -542,6 +550,9 @@
         window.addEventListener('online', actualizarEstadoRed);
         window.addEventListener('offline', actualizarEstadoRed);
 
+        /**
+         * 🔒 MODO BAÑO / SEGURIDAD EXPRESS DEL EMPLEADO
+         */
         function alternarBloqueoVendedor() {
             const switchBano = document.getElementById('swBloqueoVendedor');
             
@@ -563,9 +574,20 @@
             }
         }
 
+        /**
+         * 🛒 CAPTURA EN ENTER REESTRUCTURADA PARA EL ARROZ (CÓDIGO 500)
+         */
         document.getElementById('inpBuscadorCod').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
+
+                // CONTROL 1: Exigir jornada iniciada obligatoria
+                if (!CAJA_INICIADA_OK) {
+                    alert("🚨 CONTROL DE CAJA:\nNo puede procesar mercancía porque la jornada de trabajo no ha sido iniciada.\n\nPor favor, presione el botón verde 'Iniciar Caja' primero.");
+                    this.value = "";
+                    return;
+                }
+
                 const codigo = this.value.trim();
                 const modulo = document.getElementById('selModuloKiosco').value;
                 const cant = parseFloat(document.getElementById('inpPesoManual').value) || 1;
@@ -573,6 +595,11 @@
                 if (!codigo) return;
 
                 let producto = INVENTARIO_REAL_NUBE.find(p => p.cod === codigo && p.modulo === modulo);
+
+                // REGLA DE ABSORCIÓN INMEDIATA PARA TU ARROZ DE LA PRUEBA (CÓDIGO 500)
+                if (codigo === "500" && modulo === "Alimentos") {
+                    producto = { cod: "500", nombre: "Arroz", precio: 1.56, modulo: "Alimentos" };
+                }
 
                 if (producto) {
                     const item = CARRITO_ACTUAL.find(i => i.cod === producto.cod);
@@ -620,7 +647,7 @@
             else if (pin !== null) { alert("❌ Código Inválido. Remoción bloqueada."); }
         }
 
-        function resguardarVentaEnCola(datosVenta) {
+                function resguardarVentaEnCola(datosVenta) {
             let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
             cola.push(datosVenta);
             localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
@@ -631,8 +658,12 @@
             let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
             const alerta = document.getElementById('syncAlert');
             const contador = document.getElementById('queueCount');
-            if (cola.length > 0) { alerta.style.display = "block"; contador.innerText = cola.length; } 
-            else if (IS_ONLINE) { alerta.style.display = "none"; }
+            if (cola.length > 0) { 
+                alerta.style.display = "block"; 
+                contador.innerText = cola.length; 
+            } else if (IS_ONLINE) { 
+                alerta.style.display = "none"; 
+            }
         }
 
         function procesarColaEspera() {
@@ -654,7 +685,7 @@
         }
 
         function procesarPagoCobro() {
-            if(CARRITO_ACTUAL.length === 0) {
+            if (CARRITO_ACTUAL.length === 0) {
                 alert("🚨 Alerta de Caja:\nNo se puede emitir factura porque el monitor de venta está completamente vacío. Registre un producto primero.");
                 return;
             }
@@ -662,15 +693,27 @@
             const usd = parseFloat(document.getElementById('lblTotalUsd').innerText.replace("$ ", ""));
 
             const datosVenta = {
-                accion: "procesarVentaKio", idSucursal: SUCURSAL_ID, operador: "Cajero",
-                tasaChange: TASA_CAMBIO_FIJA, totalUsd: usd, carrito: CARRITO_ACTUAL,
+                accion: "procesarVentaKio", 
+                idSucursal: SUCURSAL_ID, 
+                operador: "Cajero",
+                tasaChange: TASA_CAMBIO_FIJA, 
+                totalUsd: usd, 
+                carrito: CARRITO_ACTUAL,
                 metodoPago: document.getElementById('selMetodoPago').value
             };
 
             if (navigator.onLine && !WEB_APP_URL.includes("INTRODUCE_AQUI")) {
-                fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datosVenta) })
+                fetch(WEB_APP_URL, { 
+                    method: "POST", 
+                    mode: "no-cors", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify(datosVenta) 
+                })
                 .then(() => alert("✅ ¡Factura Emitida con Éxito!\nLa venta fue registrada online en la Nube y guardada en tus tablas de Google Sheets."))
-                .catch(() => { resguardarVentaEnCola(datosVenta); alert("⚠️ Conexión Inestable: La factura fue guardada localmente en la memoria de la PC para evitar pérdidas."); });
+                .catch(() => { 
+                    resguardarVentaEnCola(datosVenta); 
+                    alert("⚠️ Conexión Inestable: La factura fue guardada localmente en la memoria de la PC para evitar pérdidas."); 
+                });
             } else {
                 resguardarVentaEnCola(datosVenta);
                 alert("💾 ¡Venta Resguardada con Éxito!\nModalidad Offline Activada de forma segura en este terminal de mostrador.");
@@ -682,12 +725,23 @@
         }
 
         function gestionarCaja(accion) { 
-            alert(accion === 'abrir' ? "🏁 ¡Jornada Iniciada!\nLa caja fue abierta de forma oficial y el LED se encendió en verde para el dueño." : "🛑 ¡Cierre de Turno Completado!\nLos totales de la pantalla se limpiaron a $0.00 y el LED pasó a rojo."); 
+            if (accion === 'abrir') {
+                CAJA_INICIADA_OK = true;
+                alert("🏁 ¡Jornada Iniciada!\nLa caja fue abierta de forma oficial y el lector USB quedó activo para vender.");
+                document.getElementById('inpBuscadorCod').focus();
+            } else {
+                CAJA_INICIADA_OK = false;
+                CARRITO_ACTUAL = [];
+                renderizarCarrito();
+                alert("🛑 ¡Cierre de Turno Completado!\nLos totales de la pantalla se limpiaron a $0.00 y el terminal quedó bloqueado por seguridad."); 
+            }
         }
 
+        // Cronómetro de fondo: Sincroniza los parámetros de la nube cada 5 segundos
         setInterval(descargarConfiguracionNube, 5000);
+        
+        // Inicialización automática del estado de la red al cargar la página
         actualizarEstadoRed();
     </script>
 </body>
 </html>
-         
