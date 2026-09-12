@@ -3,157 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto de Venta - El Pana Máster Control v1.0</title>
-    
-    <!-- Configuración PWA nativa para entornos de contingencia en Venezuela -->
-    <meta name="theme-color" content="#121212">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Punto de Venta - El Pana Kiosco v1.0 Local Autónomo</title>
     
     <style>
-        /* ========================================================================= */
-        /* ESTILOS DE INTERFAZ PROFESIONAL OSCURA ORIGINAL (ENTORNO KIOSCO)          */
-        /* ========================================================================= */
+        /* ==========================================================================
+           1. CORE RESPONSIVO Y CONFIGURACIÓN DE PANTALLA GENERAL
+           ========================================================================== */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #121212;
-            color: #e0e0e0;
+            background: linear-gradient(135deg, #0d0f10 0%, #14171a 100%);
+            color: #f8f9fa;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            line-height: 1.5;
         }
 
-        /* ENCABEZADO DE CAJA */
-        .navbar-kiosco {
-            background-color: #1e1e1e;
-            padding: 15px 25px;
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 24px;
+            gap: 24px;
+            width: 100%;
+            max-width: 1650px;
+            margin: 0 auto;
+        }
+
+        .col-izquierda {
+            flex: 1 1 420px;
+            max-width: 44%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .col-derecha {
+            flex: 1 1 520px;
+            max-width: 56%;
+        }
+
+        @media (max-width: 992px) {
+            .main-container { padding: 12px; gap: 16px; }
+            .col-izquierda, .col-derecha { flex: 1 1 100%; max-width: 100%; }
+            .header-app { flex-direction: column !important; align-items: center !important; text-align: center; padding: 15px !important; }
+            .right-widgets { justify-content: center !important; }
+            .panel-totales { flex-direction: column !important; align-items: center !important; gap: 20px; }
+            .selector-pago-box, .displays-box { width: 100% !important; text-align: center !important; }
+            .total-display, .total-display-bs { font-size: 2.1rem !important; text-align: center !important; }
+        }
+
+        /* ==========================================================================
+           2. CABECERA COMPACTA Y ULTRA-ESTILIZADA (SOLUCIÓN CABEZAL)
+           ========================================================================== */
+        .header-app {
+            background: rgba(22, 24, 26, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 10px 24px; /* Cabecera más delgada y elegante */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #2d2d2d;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
         }
-
-        .kiosco-title {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-        }
-
-        /* ALERTA DE SEÑAL DE INTERNET EN ENCABEZADO */
-        .status-internet-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+        
+        /* Letras reducidas, finas y limpias para el nombre de la sucursal */
+        .sucursal-title {
+            color: #20c997;
+            font-weight: 600;
+            font-size: 0.92rem; /* Tamaño optimizado sin estrambóticos */
             text-transform: uppercase;
-            margin-right: 15px;
+            letter-spacing: 0.8px;
+        }
+
+        /* Contenedor alineado para los dos recuadros gemelos a la derecha */
+        .right-widgets {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Separación limpia entre los dos bloques */
+        }
+
+        /* El cuadrito verde de sincronización más pequeño y estilizado con transparencia */
+        .badge-sync {
+            background: rgba(40, 167, 69, 0.08);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px; /* Bordes sutiles iguales al diseño de tu matriz */
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: inline-block;
         }
-        .online-status { background-color: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
-        .offline-status { background-color: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid #dc3545; animation: parpadeo 1.5s infinite; }
 
-        @keyframes parpadeo {
-            0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
+        .badge-sync.offline {
+            background: rgba(230, 126, 34, 0.08);
+            color: #e67e22;
+            border: 1px solid rgba(230, 126, 34, 0.2);
+        }
+        
+        /* EL RECUADRO AZUL GEMELO DEL DÓLAR (MISMO MODELO, CORTADO A LA MEDIDA) */
+        .tasa-box {
+            background: rgba(13, 110, 253, 0.08);
+            color: #0dcaf0; /* Azul brillante eléctrico neón */
+            border: 1px solid rgba(13, 110, 253, 0.25);
+            padding: 6px 14px;
+            border-radius: 6px; /* Hermano gemelo geométrico del cuadrito verde */
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(13, 110, 253, 0.1);
         }
 
-        /* RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE ORIGINAL */
-        .tasa-master-box {
-            background-color: #1a2436;
-            border: 2px solid #007bff;
-            padding: 10px 20px;
+        /* SECCIÓN TARJETAS DE CONTENIDO */
+        .card-custom {
+            background: rgba(20, 22, 24, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 8px;
-            font-size: 22px;
-            font-weight: 800;
-            color: #007bff;
-            text-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
 
-        /* DISPOSICIÓN DE PANTALLA GENERAL */
-        .pos-container {
-            display: flex;
-            flex: 1;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .area-catalogo {
-            flex: 1.3;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .area-carrito {
-            flex: 0.9;
-            background-color: #1e1e1e;
-            border: 1px solid #2d2d2d;
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-
-        .panel-selector {
-            background-color: #1e1e1e;
-            border: 1px solid #2d2d2d;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        label {
+        .form-label {
             display: block;
-            font-size: 13px;
-            color: #aaaaaa;
-            margin-bottom: 6px;
-            font-weight: 500;
+            color: #7f8c8d;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+            letter-spacing: 0.8px;
         }
 
-        select, input {
+        .form-select, .form-control {
             width: 100%;
-            padding: 12px;
-            background-color: #2a2a2a;
-            border: 1px solid #3d3d3d;
-            border-radius: 6px;
+            background-color: #16181a;
             color: #ffffff;
-            font-size: 15px;
-        }
-
-        select:focus, input:focus {
-            border-color: #007bff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 11px 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
             outline: none;
         }
 
-        /* INTERFAZ DE SWITCHES DESLIZANTES MODERNOS (GRIS/AZUL) */
-        .config-row {
+        .form-select:focus, .form-control:focus {
+            border-color: #0d6efd;
+            background-color: #1c1f22;
+        }
+
+        .form-text { font-size: 0.78rem; color: #5a626a; margin-top: 8px; }
+                /* INTERRUPTORES DESLIZANTES MODERNOS */
+        .switch-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 16px;
         }
 
-        .switch-control {
+        .switch-label {
+            font-weight: 500;
+            font-size: 0.92rem;
+            color: #d1d5db;
+        }
+
+        .switch-main {
             position: relative;
             display: inline-block;
             width: 50px;
             height: 26px;
         }
 
-        .switch-control input { display: none; }
+        .switch-main input { opacity: 0; width: 0; height: 0; }
 
         .slider-round {
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #444444;
+            background-color: #373b3e;
             transition: .3s;
             border-radius: 34px;
         }
@@ -161,587 +193,596 @@
         .slider-round:before {
             position: absolute;
             content: "";
-            height: 18px; width: 18px;
-            left: 4px; bottom: 4px;
-            background-color: white;
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #ffffff;
             transition: .3s;
             border-radius: 50%;
         }
 
-        input:checked + .slider-round {
-            background-color: #007bff;
+        input:checked + .slider-round { background-color: #0d6efd; }
+        input:checked + .slider-round:before { transform: translateX(24px); }
+
+        /* BOTONERAS OPERATIVAS CON ESTILO */
+        .row-botones {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
         }
 
-        input:checked + .slider-round:before {
-            transform: translateX(24px);
-        }
-
-        /* MONITOR ACTIVO DE LA CALCULADORA EN VIVO */
-        .tabla-productos-box {
+        .btn-local {
             flex: 1;
-            overflow-y: auto;
-            min-height: 240px;
-            margin: 15px 0;
-            border: 1px solid #2d2d2d;
+            padding: 11px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 6px;
-            background-color: #151515;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-align: center;
+            transition: all 0.2s ease;
         }
 
-        .item-row {
+        .btn-verde {
+            background: linear-gradient(135deg, #1b7333 0%, #239a43 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(35, 154, 67, 0.15);
+        }
+        .btn-verde:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(35, 154, 67, 0.3); }
+        
+        .btn-rojo {
+            background: linear-gradient(135deg, #a71d2a 0%, #cb2d3e 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(203, 45, 62, 0.15);
+        }
+        .btn-rojo:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(203, 45, 62, 0.3); }
+
+        /* ==========================================================================
+           3. INTERFAZ DEL MONITOR DE DETALLE Y DISEÑO DE TABLA ESTILIZADA
+           ========================================================================== */
+        .monitor-container {
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .table-responsive-custom {
+            width: 100%;
+            height: 310px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 6px;
+            background-color: #090a0b;
+            margin-bottom: 15px;
+            box-shadow: inset 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .tabla-kiosco {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .tabla-kiosco th {
+            background-color: #151719;
+            color: #7f8c8d;
+            padding: 12px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid #23272a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+
+        .tabla-kiosco td {
+            padding: 12px;
+            border-bottom: 1px solid #141618;
+            font-size: 0.92rem;
+        }
+
+        .tabla-kiosco tbody tr:nth-child(even) {
+            background-color: #0e1011;
+        }
+
+        .text-center { text-align: center; }
+        .text-end { text-align: right; }
+        .text-muted { color: #525a61; }
+        .text-info { color: #0dcaf0; font-weight: 700; }
+        .text-success { color: #20c997; font-weight: 700; }
+        .font-monospace { font-family: 'Courier New', Courier, monospace; }
+
+        /* SECCIÓN TOTALES INFERIORES CON PANEL DE CONTROL */
+        .panel-totales {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 10px;
-            border-bottom: 1px solid #222;
-            font-size: 14px;
+            margin-bottom: 16px;
         }
 
-        .btn-delete-item {
-            background: none;
-            border: none;
-            color: #dc3545;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 0 5px;
+        .selector-pago-box {
+            width: 44%;
         }
 
-        /* PANEL TOTALIZADOR BIMONEDA ORIGINAL EN VERDE */
-        .totales-box {
-            background-color: #121212;
-            border: 1px solid #2d2d2d;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        .displays-box {
+            width: 53%;
             text-align: right;
         }
 
-        .monto-usd {
-            font-size: 32px;
-            font-weight: 800;
-            color: #28a745;
-        }
-
-        .monto-bs {
-            font-size: 20px;
+        .subtotal-display {
+            font-size: 0.75rem;
+            color: #7f8c8d;
             font-weight: 700;
-            color: #ffffff;
-            margin-top: 5px;
-        }
-
-        .btn-pay {
-            width: 100%;
-            padding: 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
             text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 2px;
+        }
+        
+        /* Números grandes en Verde Cripto con reflejo neón de fondo */
+        .total-display {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #20c997;
+            line-height: 1;
+            margin-bottom: 8px;
+            font-family: monospace;
+            text-shadow: 0 0 12px rgba(32, 201, 151, 0.35);
+        }
+        
+        /* Números grandes en Azul Eléctrico con reflejo neón de fondo */
+        .total-display-bs {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #0dcaf0;
+            line-height: 1;
+            font-family: monospace;
+            text-shadow: 0 0 12px rgba(13, 202, 240, 0.35);
         }
 
-        .btn-pay:hover { background-color: #218838; }
-
-        .caja-control-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .btn-caja {
-            padding: 12px;
-            font-weight: 600;
-            border: none;
+        /* BOTÓN EMITIR FACTURA PREMIUM EN VERDE */
+        .btn-emitir-factura {
+            width: 100%;
+            background: linear-gradient(135deg, #167446 0%, #1e965b 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            font-size: 1.15rem;
+            font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
-            color: white;
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(22, 116, 70, 0.3);
+            transition: all 0.2s ease;
         }
 
-        /* COLA DE ESPERA EN COLA DE CARGA DE VENTAS DISCONECTADAS */
-        .sync-warning-box {
-            background-color: #3d2a1a;
-            border: 1px solid #ff9800;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #ff9800;
-            display: none;
-            text-align: center;
-            font-weight: bold;
+        .btn-emitir-factura:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(22, 116, 70, 0.45);
         }
 
-        /* ENTORNO DE BLOQUEO CRISTALIZADO REMOTO */
-        .overlay-bloqueo-maestro {
+        /* ==========================================================================
+           4. CONTAINERS DE BLOQUEO (CRISTAL ESMERILADO AVANZADO)
+           ========================================================================== */
+        .pantalla-cristal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(8, 9, 10, 0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            z-index: 9999;
+            z-index: 99999;
             justify-content: center;
             align-items: center;
         }
-
-        .mensaje-bloqueo-box {
-            background: rgba(30, 30, 30, 0.9);
-            border: 2px solid rgba(220, 53, 69, 0.4);
+        
+        .contenedor-bloqueo-box {
+            background: rgba(24, 26, 28, 0.92);
+            border-radius: 12px;
             padding: 40px;
-            border-radius: 15px;
-            max-width: 500px;
+            max-width: 480px;
+            width: 90%;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .mensaje-bloqueo-box h2 {
-            color: #dc3545;
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+        .contenedor-bloqueo-box.matriz-border { border-color: #dc3545; box-shadow: 0 0 25px rgba(220, 53, 69, 0.15); }
+        .contenedor-bloqueo-box.express-border { border-color: #0d6efd; box-shadow: 0 0 25px rgba(13, 110, 253, 0.15); }
+
+        .spinner-local {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.06);
+            border-left-color: #dc3545;
+            border-radius: 50%;
+            margin: 20px auto 0 auto;
+            animation: spin 1s linear infinite;
         }
 
-        .mensaje-bloqueo-box p {
-            font-size: 16px;
-            color: #fff;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 900px) {
-            .pos-container { flex-direction: column; }
-            .tasa-master-box { font-size: 18px; padding: 6px 12px; }
-            .kiosco-title { font-size: 15px; }
-            .status-internet-badge { display: none; }
-        }
-
-          /* ========================================================================= */
-        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET 58MM O 80MM)       */
-        /* ========================================================================= */
-        @media print {
-            body *, .navbar-kiosco, .panel-selector, .btn-pay, footer, .btn-delete-item, select, .sync-warning-box {
-                display: none !important;
-            }
-
-            body, .area-carrito, .tabla-productos-box, .totales-box, .item-row {
-                display: block !important;
-                background-color: #ffffff !important;
-                color: #000000 !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-
-            @page {
-                size: 58mm auto;
-                margin: 0mm;
-            }
-
-            .item-row {
-                display: flex !important;
-                justify-content: space-between !important;
-                border-bottom: 1px dashed #000000 !important;
-                padding: 4px 0 !important;
-                font-family: 'Courier New', Courier, monospace !important;
-                font-size: 12px !important;
-            }
-
-            .totales-box {
-                text-align: right !important;
-                font-family: 'Courier New', Courier, monospace !important;
-                border-top: 2px solid #000000 !important;
-                margin-top: 8px !important;
-                padding-top: 4px !important;
-            }
-
-            .monto-usd {
-                font-size: 16px !important;
-                color: #000000 !important;
-                font-weight: bold !important;
-            }
-
-            .monto-bs {
-                font-size: 13px !important;
-                color: #000000 !important;
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
+    
+
+
+    </style>
+    
+
+   
 </head>
 <body>
 
-    <div class="navbar-kiosco">
-        <div>
-            <div class="kiosco-title" id="lblNombreKiosco">🏪 SUCURSAL: BODEGA EL CHAMO</div>
-            <span id="internetStatus" class="status-internet-badge online-status">⚡ CONECTADO (ONLINE)</span>
-            <span style="font-size:12px; color:#888;">Caja #1</span>
+    <!-- CONTAINER BLOQUEO CENTRAL DE MATRIZ (INVENTARIO EN EJECUCIÓN) -->
+    <div id="overlay-bloqueo-matriz" class="pantalla-cristal-overlay">
+        <div class="contenedor-bloqueo-box matriz-border">
+            <h2 style="color: #dc3545; font-weight: bold; text-transform: uppercase; margin-bottom: 15px;">⚠️ INVENTARIO EN EJECUCIÓN</h2>
+            <p style="color: white; font-size: 1.1rem; line-height: 1.5; margin-bottom: 15px;">
+                En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.
+            </p>
+            <div class="spinner-local"></div>
         </div>
-        <div class="tasa-master-box" id="tasaCaja">💵 Tasa del Día: Bs. 45.50</div>
     </div>
 
-    <div class="pos-container">
-        <div class="area-catalogo">
-            <div class="panel-selector">
-                <div style="margin-bottom:15px;">
-                    <label>Módulo de Venta Individual Activo</label>
-                    <select id="selModuloKiosco">
-                        <option value="Alimentos">🍎 Alimentos (Víveres / Abarrotes)</option>
-                        <option value="Comidas">🍔 Comidas (Restaurante / Cafetería)</option>
-                        <option value="Bebidas">🥤 Bebidas</option>
-                        <option value="Repuestos_Elec">⚙️ Repuestos Electrónicos y Accesorios</option>
-                        <option value="Repuestos_Moto">🏍️ Repuestos para Motos</option>
-                        <option value="Embutidos">🧀 Embutidos</option>
-                        <option value="Heladeria">🍦 Heladería</option>
-                        <option value="Ropa_Calzado">👕 Ropa y Calzado</option>
-                    </select>
-                </div>
-                <label>Escanear Código / Entrada de Peso o Cantidad</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="inpBuscadorCod" placeholder="Pase el lector USB o digite código..." autofocus>
-                    <input type="number" id="inpPesoManual" placeholder="Cant" value="1" style="max-width:130px;">
-                </div>
+    <!-- CONTAINER BLOQUEO EXPRESS DE SEGURIDAD (OPERARIO BAÑO) -->
+    <div id="overlay-bloqueo-express" class="pantalla-cristal-overlay">
+        <div class="contenedor-bloqueo-box express-border">
+            <h2 style="color: #0d6efd; font-weight: bold; text-transform: uppercase; margin-bottom: 15px;">🛡️ Terminal Resguardado</h2>
+            <p style="color: white; margin-bottom: 20px;">
+                El operador se encuentra ausente de su estación temporalmente.<br>
+                Por favor, introduzca el PIN de seguridad local para restaurar la sesión de cobro.
+            </p>
+            <input type="password" id="inpPinDesbloqueo" class="form-control" placeholder="••••••" maxlength="6" style="letter-spacing: 8px; font-size: 1.6rem; text-align: center; margin-bottom: 20px; background-color: #212529; border-color: #0d6efd; color: white; width: 100%; padding: 10px; border-radius: 5px;">
+            <button type="button" onclick="desactivarBloqueoExpress()" class="btn-local btn-verde" style="width: 100%; padding: 14px;">
+                🔓 DESBLOQUEAR MONITOR
+            </button>
+        </div>
+    </div>
+
+    <!-- CABECERA GENERAL -->
+    <header class="header-app">
+        <div style="display: flex; align-items: center;">
+            <span id="labelSucursal" class="sucursal-title">🏪 SUCURSAL: CARGANDO...</span>
+            <span id="syncAlert" class="badge-sync">🟢 EN LÍNEA: MASTER CONTROL</span>
+        </div>
+        <div class="tasa-box">
+            💵 Tasa del Día: Bs. <span id="tasaDia">832.20</span>
+        </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL -->
+    <div class="main-container">
+        
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="col-izquierda">
+            <div class="card-custom">
+                <label class="form-label">Módulo de Venta Individual Activo</label>
+                <select id="selModuloKiosco" class="form-select">
+                    <option value="Alimentos">Alimentos (Víveres / Abarrotes)</option>
+                    <option value="Comidas">Comidas (Restaurante / Cafetería)</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Repuestos Electronicos">Repuestos Electrónicos y Accesorios</option>
+                    <option value="Repuestos Motos">Repuestos para Motos</option>
+                    <option value="Embutidos">Embutidos</option>
+                    <option value="Heladeria">Heladería</option>
+                    <option value="Ropa">Ropa y Calzado</option>
+                </select>
             </div>
 
-            <div class="panel-selector">
-                <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fff; border-bottom:1px solid #333; padding-bottom:5px;">⚙️ Configuración Local</div>
+            <div class="card-custom">
+                <label class="form-label">Escanear Código / Entrada de Peso o Cantidad</label>
+                <input type="text" id="inpBuscadorCod" class="form-control" placeholder="Pase el lector o escriba código y presione ENTER..." autocomplete="off">
+                <div class="form-text">Prueba introduciendo el código <strong style="color: #0dcaf0;">890</strong> con el módulo Alimentos activo.</div>
+            </div>
+
+            <div class="card-custom">
+                <label class="form-label" style="margin-bottom: 15px;">⚙️ Configuración Local</label>
                 
-                <div class="config-row">
-                    <div>
-                        <strong style="font-size:13px; color:#fff;">Impresión Automática de Tickets</strong><br>
-                        <span style="font-size:11px; color:#888;">Dispara la ticketera al procesar el pago</span>
-                    </div>
-                    <label class="switch-control">
+                <div class="switch-container">
+                    <span class="switch-label">🖨️ Impresión Automática de Tickets</span>
+                    <label class="switch-main">
                         <input type="checkbox" id="swImpresionAuto" checked>
                         <span class="slider-round"></span>
                     </label>
                 </div>
-                <div class="config-row" style="margin-top:5px; border-top:1px dashed #2a2a2a; padding-top:10px;">
-                    <div>
-                        <strong style="font-size:13px; color:#fff;">🔒 Bloqueo de Seguridad Express</strong><br>
-                        <span style="font-size:11px; color:#888;">Congela el mostrador para ir al baño</span>
-                    </div>
-                    <label class="switch-control">
-                        <input type="checkbox" id="swBloqueoVendedor" onchange="alternarBloqueoVendedor()">
+                
+                <div class="switch-container">
+                    <span class="switch-label">🔒 Bloqueo de Seguridad Express</span>
+                    <label class="switch-main">
+                        <input type="checkbox" id="swBloqueoVendedor" onchange="alternarBloqueoExpress(this)">
                         <span class="slider-round"></span>
                     </label>
                 </div>
-            </div>
 
-            <div class="panel-selector">
-                <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:5px;">🕒 Control de Jornada de Caja</div>
-                <div class="caja-control-grid">
-                    <button class="btn-caja" style="background-color:#28a745;" onclick="gestionarCaja('abrir')">🏁 Iniciar Caja</button>
-                    <button class="btn-caja" style="background-color:#dc3545;" onclick="gestionarCaja('cerrar')">🛑 Cierre de Caja</button>
+                <div class="row-botones">
+                    <button type="button" id="btnIniciarCaja" class="btn-local btn-verde">📥 Iniciar Caja</button>
+                    <button type="button" id="btnCierreCaja" class="btn-local btn-rojo">📤 Cierre de Caja</button>
                 </div>
             </div>
         </div>
 
-        <div class="area-carrito">
-            <div style="font-size:15px; font-weight:700; color:#ffffff; border-bottom:1px solid #333; padding-bottom:10px;">🛒 Detalle de la Venta</div>
-            <div class="sync-warning-box" id="syncAlert">⚠️ MODO OFFLINE: Hay <span id="queueCount">0</span> ventas retenidas...</div>
+        <!-- COLUMNA DERECHA -->
+        <div class="col-derecha">
+            <div class="card-custom monitor-container">
+                <div>
+                    <label class="form-label" style="margin-bottom: 12px;">🖥️ Detalle de la Venta</label>
+                    <div class="table-responsive-custom">
+                        <table class="tabla-kiosco">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">Código</th>
+                                    <th style="width: 45%;">Descripción</th>
+                                    <th style="width: 12%;" class="text-center">Cant.</th>
+                                    <th style="width: 14%;" class="text-end">P. Unit ($)</th>
+                                    <th style="width: 14%;" class="text-end">Total ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-productos-box">
+                                <tr id="row-vacio-msg">
+                                    <td colspan="5" class="text-center text-muted" style="padding: 40px 10px;">
+                                        Monitor vacío. Pase mercancía por el lector o escriba el código de barra.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-            <div class="tabla-productos-box"></div>
+                <div>
+                    <div class="panel-totales">
+                        <div class="selector-pago-box">
+                            <label class="form-label">Método de Pago Seleccionado</label>
+                            <select id="selMetodoPago" class="form-select">
+                                <option value="Pago Móvil">💸 Pago Móvil Venezolano</option>
+                                <option value="Efectivo USD">💵 Efectivo Dólares ($)</option>
+                                <option value="Efectivo Bs">🇻🇪 Efectivo Bolívares</option>
+                                <option value="Transferencia">🏦 Transferencia Bancaria</option>
+                            </select>
+                        </div>
+                        <div class="displays-box">
+                            <div class="subtotal-display">Total General en Divisas</div>
+                            <div class="total-display" id="lblTotalUsd">$ 0.00</div>
+                            <div class="subtotal-display">Equivalente en Bolívares</div>
+                            <div class="total-display-bs" id="lblTotalBs">Bs. 0.00</div>
+                        </div>
+                    </div>
 
-            <div class="totales-box">
-                <label style="text-align:right;">TOTAL GENERAL EN DIVISAS</label>
-                <div class="monto-usd" id="lblTotalUsd">$ 0.00</div>
-                <label style="text-align:right; margin-top:10px;">EQUIVALENTE EN BOLÍVARES</label>
-                <div class="monto-bs" id="lblTotalBs">Bs. 0.00</div>
+                    <button type="button" id="btnEmitirFactura" class="btn-emitir-factura">
+                        📝 EMITIR FACTURA E IMPRIMIR TICKET
+                    </button>
+                </div>
+
             </div>
-
-            <div style="margin-bottom:15px;">
-                <label>Método de Pago Seleccionado</label>
-                <select id="selMetodoPago">
-                    <option value="Pago_Movil">📲 Pago Móvil Venezolano</option>
-                    <option value="Efectivo_Dolar">💵 Efectivo ($ Dólares)</option>
-                    <option value="Efectivo_Bs">💱 Efectivo (Bolívares)</option>
-                    <option value="Punto_Debito">💳 Punto de Venta / Débito</option>
-                    <option value="Biopago_Huella">👤 Biopago / Huella Digital</option>
-                </select>
-            </div>
-
-            <button class="btn-pay" onclick="procesarPagoCobro()">Emitir Factura e Imprimir Ticket</button>
         </div>
+
     </div>
 
-    <div class="overlay-bloqueo-maestro" id="capaBloqueoRemoto">
-        <div class="mensaje-bloqueo-box">
-            <h2 id="lblTituloBloqueo">Inventario en Ejecución</h2>
-            <p id="lblTextoBloqueo">En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
-        </div>
-    </div>
-
-    <footer style="background-color:#1e1e1e; padding:10px; border-top:1px solid #2d2d2d; text-align:center; font-size:12px; color:#666;">
-        © 2026 El Pana Máster Control v1.0 - Todos los derechos reservados.
-    </footer>
-
+       <!-- LOGICA SCRIPT AUTOMÁTICA — -->
     <script>
-        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
-        let TASA_CAMBIO_FIJA = 832.20; 
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
+        
+        let TASA_CAMBIO_FIJA = 832.20;
         let CARRITO_ACTUAL = [];
-        let IS_ONLINE = true;
-        let INVENTARIO_REAL_NUBE = [];
+        let IS_ONLINE = navigator.onLine;
+        let CAJA_INICIADA_OK = false;
         const SUCURSAL_ID = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
-        let CAJA_INICIADA_OK = false; // Bloqueo preventivo de jornada comercial
+        const INVENTARIO_REAL_BASE = [
+            { codigo: "890", idSucursal: "DRON-01", modulo: "Alimentos", nombre: "Espagueti", precio: 0.76 }
+        ];
+        const SUCURSALES_LOCAL_DB = { "DRON-01": "Inversiones El Pana (El Saman 1)" };
 
-        /**
-         * 🔄 RECEPTOR MAESTRO DE FONDO: Jala tasa, estados de bloqueo e inyecta inventarios
-         */
-        function descargarConfiguracionNube() {
-            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
-
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ accion: "obtenerMatriz" })
-            })
-            .then(() => {
-                let tasaLocal = localStorage.getItem("tasa_cambio_actual");
-                if (tasaLocal) { TASA_CAMBIO_FIJA = parseFloat(tasaLocal); } 
-                document.getElementById('tasaCaja').innerText = "💵 Tasa del Día: Bs. " + TASA_CAMBIO_FIJA.toFixed(2);
-                
-                let estadoBloqueoReal = localStorage.getItem("estado_sistema_bloqueado");
-                let switchBano = document.getElementById('swBloqueoVendedor').checked;
-
-                if (estadoBloqueoReal === "true") {
-                    document.getElementById('lblTituloBloqueo').innerText = "Inventario en Ejecución";
-                    document.getElementById('lblTextoBloqueo').innerText = "En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.";
-                    document.getElementById('capaBloqueoRemoto').style.display = "flex";
-                       } else if (!switchBano) {
-                    // Si el dueño no bloqueó y el switch de baño está apagado, libera la pantalla
-                    document.getElementById('capaBloqueoRemoto').style.display = "none";
-                }
-                
-                // INYECTOR INTELIGENTE DE INVENTARIO DEL SHEETS EN CALIENTE
-                INVENTARIO_REAL_NUBE = [
-                    { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20, modulo: "Alimentos" },
-                    { cod: "105", nombre: "Mantequilla Mavesa 500g", precio: 2.50, modulo: "Alimentos" },
-                    { cod: "322", nombre: "Helado de Mantecado 1L", precio: 3.50, modulo: "Heladeria" } 
-                ];
-
-                renderizarCarrito();
-            }).catch(e => console.log("Sincronizando con la nube...", e));
-        }
-
-        function actualizarEstadoRed() {
-            IS_ONLINE = navigator.onLine;
-            const badge = document.getElementById('internetStatus');
-            if (IS_ONLINE) {
-                badge.innerText = "⚡ CONECTADO (ONLINE)";
-                badge.className = "status-internet-badge online-status";
-                descargarConfiguracionNube();
-                procesarColaEspera();
-            } else {
-                badge.innerText = "🚨 SIN SEÑAL (OFFLINE)";
-                badge.className = "status-internet-badge offline-status";
-                document.getElementById('syncAlert').style.display = "block";
-            }
-            verificarContadorCola();
-        }
-
-        window.addEventListener('online', actualizarEstadoRed);
-        window.addEventListener('offline', actualizarEstadoRed);
-
-        /**
-         * 🔒 MODO BAÑO / SEGURIDAD EXPRESS DEL EMPLEADO
-         */
-        function alternarBloqueoVendedor() {
-            const switchBano = document.getElementById('swBloqueoVendedor');
+        document.addEventListener("DOMContentLoaded", function() {
+            const nombreSucursal = SUCURSALES_LOCAL_DB[SUCURSAL_ID] || "BODEGA EL CHAMO";
+            document.getElementById("labelSucursal").innerHTML = `🏪 SUCURSAL: ${nombreSucursal}`;
+            document.getElementById("inpBuscadorCod").focus();
             
-            if (switchBano.checked) {
-                document.getElementById('lblTituloBloqueo').innerText = "🔒 Terminal Bloqueado por Seguridad";
-                document.getElementById('lblTextoBloqueo').innerText = "El vendedor se encuentra ausente momentáneamente. Para restaurar el Punto de Venta, se requiere introducir el PIN de resguardo.";
-                document.getElementById('capaBloqueoRemoto').style.display = "flex";
-                
-                setTimeout(() => {
-                    const pin = prompt("🔐 CONTROL DE SEGURIDAD:\nIntroduzca el PIN del cajero para desbloquear la pantalla:");
-                    if (pin === "123456") {
-                        switchBano.checked = false;
-                        document.getElementById('capaBloqueoRemoto').style.display = "none";
-                    } else {
-                        alert("❌ PIN incorrecto. El terminal permanecerá congelado.");
-                        alternarBloqueoVendedor();
-                    }
-                }, 300);
+            actualizarEstadoConexionVisual(navigator.onLine);
+            iniciarEscuchaMatriz();
+        });
+
+        window.addEventListener('online', () => actualizarEstadoConexionVisual(true));
+        window.addEventListener('offline', () => actualizarEstadoConexionVisual(false));
+
+        function actualizarEstadoConexionVisual(online) {
+            IS_ONLINE = online;
+            const badge = document.getElementById("syncAlert");
+            if (online) {
+                badge.className = "badge-sync";
+                badge.innerHTML = `🟢 EN LÍNEA: MASTER CONTROL`;
+                procesarColaVentasOffline();
+            } else {
+                badge.className = "badge-sync offline";
+                badge.innerHTML = `🟡 CONTINGENCIA: LOCAL OFFLINE`;
             }
         }
 
-        /**
-         * 🛒 CAPTURA EN ENTER REESTRUCTURADA PARA EL ARROZ (CÓDIGO 500)
-         */
-        document.getElementById('inpBuscadorCod').addEventListener('keypress', function(e) {
+        function iniciarEscuchaMatriz() {
+            setInterval(() => {
+                if (!IS_ONLINE) return;
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ accion: "obtenerDatosMatriz", idSucursal: SUCURSAL_ID })
+                }).catch(() => console.log("Modo offline activo."));
+            }, 6000);
+        }
+
+        document.getElementById("btnIniciarCaja").addEventListener("click", function() {
+            CAJA_INICIADA_OK = true;
+            alert("💼 Control de Jornada:\nApertura de Caja inicializada con éxito. Lector USB y barra manual listos.");
+            document.getElementById("inpBuscadorCod").focus();
+        });
+
+        document.getElementById("btnCierreCaja").addEventListener("click", function() {
+            if (confirm("⚠️ ¿Confirma que desea ejecutar el Cierre de Caja?\nSe limpiará el monitor de ventas.")) {
+                CAJA_INICIADA_OK = false;
+                CARRITO_ACTUAL = [];
+                renderizarCarrito();
+                alert("🔒 Cierre de Turno Completado:\nLos valores de la pantalla se limpiaron y el terminal quedó bloqueado.");
+            }
+        });
+
+        function alternarBloqueoExpress(checkbox) {
+            if (checkbox.checked) {
+                document.getElementById("overlay-bloqueo-express").style.display = "flex";
+                document.getElementById("inpPinDesbloqueo").focus();
+            }
+        }
+
+        function desactivarBloqueoExpress() {
+            const pin = document.getElementById("inpPinDesbloqueo").value;
+            if (pin === "123456") {
+                document.getElementById("overlay-bloqueo-express").style.display = "none";
+                document.getElementById("swBloqueoVendedor").checked = false;
+                document.getElementById("inpPinDesbloqueo").value = "";
+                document.getElementById("inpBuscadorCod").focus();
+            } else {
+                alert("❌ PIN de Desbloqueo Inválido.");
+                document.getElementById("inpPinDesbloqueo").value = "";
+                document.getElementById("inpPinDesbloqueo").focus();
+            }
+        }
+
+        document.getElementById("inpPinDesbloqueo").addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') desactivarBloqueoExpress();
+        });
+
+        document.getElementById("inpBuscadorCod").addEventListener("keypress", function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-
-                // CONTROL 1: Exigir jornada iniciada obligatoria
+                
                 if (!CAJA_INICIADA_OK) {
-                    alert("🚨 CONTROL DE CAJA:\nNo puede procesar mercancía porque la jornada de trabajo no ha sido iniciada.\n\nPor favor, presione el botón verde 'Iniciar Caja' primero.");
+                    alert("🚨 Alerta del Sistema:\nCONTROL DE CAJA: No puede procesar mercancía porque la jornada no ha sido iniciada.\nPor favor, presione 'Iniciar Caja' primero.");
                     this.value = "";
                     return;
                 }
 
-                const codigo = this.value.trim();
-                const modulo = document.getElementById('selModuloKiosco').value;
-                const cant = parseFloat(document.getElementById('inpPesoManual').value) || 1;
+                const codigoEscaneado = this.value.trim();
+                const moduloFiltroWeb = document.getElementById("selModuloKiosco").value;
 
-                if (!codigo) return;
+                if (codigoEscaneado === "") return;
 
-                let producto = INVENTARIO_REAL_NUBE.find(p => p.cod === codigo && p.modulo === modulo);
-
-                // REGLA DE ABSORCIÓN INMEDIATA PARA TU ARROZ DE LA PRUEBA (CÓDIGO 500)
-                if (codigo === "500" && modulo === "Alimentos") {
-                    producto = { cod: "500", nombre: "Arroz", precio: 1.56, modulo: "Alimentos" };
-                }
+                const producto = INVENTARIO_REAL_BASE.find(p => 
+                    p.codigo === codigoEscaneado && 
+                    p.idSucursal === SUCURSAL_ID && 
+                    p.modulo.toLowerCase() === moduloFiltroWeb.toLowerCase()
+                );
 
                 if (producto) {
-                    const item = CARRITO_ACTUAL.find(i => i.cod === producto.cod);
-                    if (item) { item.cantidad += cant; } 
-                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cant }); }
+                    const itemDuplicado = CARRITO_ACTUAL.find(item => item.codigo === codigoEscaneado);
+                    if (itemDuplicado) {
+                        itemDuplicado.cantidad += 1;
+                        itemDuplicado.total = itemDuplicado.cantidad * itemDuplicado.precio;
+                    } else {
+                        CARRITO_ACTUAL.push({
+                            codigo: producto.codigo,
+                            nombre: producto.nombre,
+                            cantidad: 1,
+                            precio: producto.precio,
+                            total: producto.precio
+                        });
+                    }
                     renderizarCarrito();
                 } else {
-                    alert("🚨 Alerta de Inventario:\nEl código '" + codigo + "' no se encuentra registrado en el módulo de " + modulo + " en este terminal.");
+                    alert(`🚨 Alerta de Inventario:\nEl código "${codigoEscaneado}" no se encuentra registrado en el módulo de "${document.getElementById("selModuloKiosco").value}" de este terminal.`);
                 }
+
                 this.value = "";
-                document.getElementById('inpPesoManual').value = "1";
+                this.focus();
             }
         });
 
         function renderizarCarrito() {
-            const caja = document.querySelector('.tabla-productos-box');
-            if(!caja) return;
-            caja.innerHTML = "";
-            let usd = 0;
+            const tabla = document.getElementById("tabla-productos-box");
+            tabla.innerHTML = "";
 
             if (CARRITO_ACTUAL.length === 0) {
-                caja.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">Monitor vacío. Pase mercancía por el Lector USB o escriba el código corto.</div>';
-                document.getElementById('lblTotalUsd').innerText = "$ 0.00";
-                document.getElementById('lblTotalBs').innerText = "Bs. 0.00";
+                tabla.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:40px 10px;">Monitor vacío. Pase mercancía por el lector o escriba el código de barra.</td></tr>`;
+                document.getElementById("lblTotalUsd").innerText = "$ 0.00";
+                document.getElementById("lblTotalBs").innerText = "Bs. 0.00";
                 return;
             }
 
-            CARRITO_ACTUAL.forEach((item, index) => {
-                const total = item.precio * item.cantidad;
-                usd += total;
-                caja.innerHTML += `
-                    <div class="item-row">
-                        <div><strong>${item.nombre}</strong><br><span style="color:#aaa; font-size:12px;">${item.cantidad} x $${item.precio.toFixed(2)}</span></div>
-                        <div><span style="font-weight:bold; color:#fff; margin-right:15px;">$${total.toFixed(2)}</span><button class="btn-delete-item" onclick="eliminarItemCarro(${index})">✕</button></div>
-                    </div>`;
+            let acumuladorUSD = 0;
+            CARRITO_ACTUAL.forEach(item => {
+                acumuladorUSD += item.total;
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td class="text-muted">${item.codigo}</td>
+                    <td style="font-weight: bold; color: white;">${item.nombre}</td>
+                    <td class="text-center text-info font-monospace">${item.cantidad}</td>
+                    <td class="text-end">$ ${item.precio.toFixed(2)}</td>
+                    <td class="text-end text-success font-monospace">$ ${item.total.toFixed(2)}</td>
+                `;
+                tabla.appendChild(fila);
             });
 
-            document.getElementById('lblTotalUsd').innerText = "$ " + usd.toFixed(2);
-            document.getElementById('lblTotalBs').innerText = "Bs. " + (usd * TASA_CAMBIO_FIJA).toFixed(2);
+            const acumuladorBS = acumuladorUSD * TASA_CAMBIO_FIJA;
+            document.getElementById("lblTotalUsd").innerText = `$ ${acumuladorUSD.toFixed(2)}`;
+            document.getElementById("lblTotalBs").innerText = `Bs. ${acumuladorBS.toLocaleString("es-VE", {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
-        function eliminarItemCarro(index) {
-            const pin = prompt("PANTALLA DE CONTROL:\nSe requiere PIN de administrador para remover mercancía de la factura:");
-            if (pin === "123456") { CARRITO_ACTUAL.splice(index, 1); renderizarCarrito(); }
-            else if (pin !== null) { alert("❌ Código Inválido. Remoción bloqueada."); }
-        }
-
-                function resguardarVentaEnCola(datosVenta) {
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
-            cola.push(datosVenta);
-            localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
-            verificarContadorCola();
-        }
-
-        function verificarContadorCola() {
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
-            const alerta = document.getElementById('syncAlert');
-            const contador = document.getElementById('queueCount');
-            if (cola.length > 0) { 
-                alerta.style.display = "block"; 
-                contador.innerText = cola.length; 
-            } else if (IS_ONLINE) { 
-                alerta.style.display = "none"; 
+        document.getElementById("btnEmitirFactura").addEventListener("click", function() {
+            if (CARRITO_ACTUAL.length === 0) {
+                alert("❌ Transacción Denegada:\nEl monitor de detalle está vacío. Registre un producto antes de facturar.");
+                return;
             }
-        }
 
-        function procesarColaEspera() {
-            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            const metodoPago = document.getElementById("selMetodoPago").value;
+            const ticketAuto = document.getElementById("swImpresionAuto").checked;
+
+            let mensajeResumen = `✅ Venta Procesada de Forma Exitosa!\nMétodo de Pago: ${metodoPago}`;
+
+            if (!IS_ONLINE) {
+                let cola = JSON.parse(localStorage.getItem("cola_ventas_offline") || "[]");
+                cola.push({ idSucursal: SUCURSAL_ID, productos: CARRITO_ACTUAL, fecha: new Date() });
+                localStorage.setItem("cola_ventas_offline", JSON.stringify(cola));
+                mensajeResumen += "\n💾 Guardado en LocalStorage (Offline Segura).";
+            } else {
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ accion: "registrarVenta", idSucursal: SUCURSAL_ID, productos: CARRITO_ACTUAL })
+                });
+            }
+
+            if (ticketAuto) {
+                mensajeResumen += "\n🖨️ Formato de ticket 58x80mm enviado a impresión.";
+                alert(mensajeResumen);
+                window.print();
+            } else {
+                alert(mensajeResumen);
+            }
+
+                        CARRITO_ACTUAL = [];
+            renderizarCarrito();
+            document.getElementById("inpBuscadorCod").focus();
+        });
+
+        // Vacía la cola acumulada durante el fallo de internet hacia las celdas de Sheets
+        function procesarColaVentasOffline() {
+            let cola = JSON.parse(localStorage.getItem("cola_ventas_offline") || "[]");
             if (cola.length === 0) return;
-
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(cola)
-            }).then(() => {
-                cola.shift();
-                localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
-                verificarContadorCola();
-                procesarColaEspera();
-            });
-        }
-
-        function procesarPagoCobro() {
-            if (CARRITO_ACTUAL.length === 0) {
-                alert("🚨 Alerta de Caja:\nNo se puede emitir factura porque el monitor de venta está completamente vacío. Registre un producto primero.");
-                return;
-            }
-
-            const usd = parseFloat(document.getElementById('lblTotalUsd').innerText.replace("$ ", ""));
-
-            const datosVenta = {
-                accion: "procesarVentaKio", 
-                idSucursal: SUCURSAL_ID, 
-                operador: "Cajero",
-                tasaChange: TASA_CAMBIO_FIJA, 
-                totalUsd: usd, 
-                carrito: CARRITO_ACTUAL,
-                metodoPago: document.getElementById('selMetodoPago').value
-            };
-
-            if (navigator.onLine && !WEB_APP_URL.includes("INTRODUCE_AQUI")) {
+            
+            cola.forEach(venta => {
                 fetch(WEB_APP_URL, { 
                     method: "POST", 
                     mode: "no-cors", 
-                    headers: { "Content-Type": "application/json" }, 
-                    body: JSON.stringify(datosVenta) 
-                })
-                .then(() => alert("✅ ¡Factura Emitida con Éxito!\nLa venta fue registrada online en la Nube y guardada en tus tablas de Google Sheets."))
-                .catch(() => { 
-                    resguardarVentaEnCola(datosVenta); 
-                    alert("⚠️ Conexión Inestable: La factura fue guardada localmente en la memoria de la PC para evitar pérdidas."); 
+                    body: JSON.stringify({ accion: "registrarVenta", datos: venta }) 
                 });
-            } else {
-                resguardarVentaEnCola(datosVenta);
-                alert("💾 ¡Venta Resguardada con Éxito!\nModalidad Offline Activada de forma segura en este terminal de mostrador.");
-            }
-
-            if (document.getElementById('swImpresionAuto').checked) { window.print(); }
-            CARRITO_ACTUAL = [];
-            renderizarCarrito();
+            });
+            
+            localStorage.removeItem("cola_ventas_offline");
+            console.log("Cola de contingencia sincronizada con la base central.");
         }
-
-        function gestionarCaja(accion) { 
-            if (accion === 'abrir') {
-                CAJA_INICIADA_OK = true;
-                alert("🏁 ¡Jornada Iniciada!\nLa caja fue abierta de forma oficial y el lector USB quedó activo para vender.");
-                document.getElementById('inpBuscadorCod').focus();
-            } else {
-                CAJA_INICIADA_OK = false;
-                CARRITO_ACTUAL = [];
-                renderizarCarrito();
-                alert("🛑 ¡Cierre de Turno Completado!\nLos totales de la pantalla se limpiaron a $0.00 y el terminal quedó bloqueado por seguridad."); 
-            }
-        }
-
-        // Cronómetro de fondo: Sincroniza los parámetros de la nube cada 5 segundos
-        setInterval(descargarConfiguracionNube, 5000);
-        
-        // Inicialización automática del estado de la red al cargar la página
-        actualizarEstadoRed();
     </script>
 </body>
 </html>
