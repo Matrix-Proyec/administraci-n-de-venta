@@ -49,7 +49,7 @@
         }
 
         .login-subtitle {
-            color: #007bff;
+            color: #ff9800;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
@@ -83,7 +83,7 @@
         }
 
         input:focus {
-            border-color: #007bff;
+            border-color: #ff9800;
             outline: none;
         }
 
@@ -94,7 +94,7 @@
         }
 
         .password-wrapper input {
-            padding-right: 45px; /* Espacio para que el texto no tape el ojo */
+            padding-right: 45px;
         }
 
         .eye-icon {
@@ -110,13 +110,13 @@
         }
 
         .eye-icon:hover {
-            color: #007bff;
+            color: #ff9800;
         }
 
         .btn-login {
             width: 100%;
             padding: 14px;
-            background-color: #007bff;
+            background-color: #ff9800;
             color: white;
             border: none;
             border-radius: 6px;
@@ -129,7 +129,7 @@
         }
 
         .btn-login:hover {
-            background-color: #0056b3;
+            background-color: #e68a00;
         }
 
         /* MENSAJE DE ESTADO DINÁMICO (VERDE / ROJO) */
@@ -162,14 +162,13 @@
         <!-- FORMULARIO DE ACCESO -->
         <div class="form-group">
             <label>Usuario Autorizado</label>
-            <input type="text" id="inpUser" placeholder="Ej: elchamo" autofocus>
+            <input type="text" id="inpUser" placeholder="Ej: Juan" autofocus>
         </div>
 
         <div class="form-group">
             <label>Contraseña Secreta</label>
             <div class="password-wrapper">
                 <input type="password" id="inpPass" placeholder="••••••••">
-                <!-- El botón del ojito visualizador nativo -->
                 <span class="eye-icon" id="btnToggleEye" onclick="alternarVisibilidadClave()">👁️</span>
             </div>
         </div>
@@ -181,13 +180,13 @@
 
         <footer>
             © 2026 RJ-Profecional - Todos los derechos reservados.<br>
-            Protegido bajo Licencia Privada Comercial.
+            Protegido bajo Licencia Privada Comercial "El pana".
         </footer>
     </div>
 
     <script>
-        // Sincronización exacta con tu Apps Script en Google Drive
-        const WEB_APP_URL = "INTRODUCE_AQUI_TU_URL_DE_APPS_SCRIPT";
+        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec ";
 
         /**
          * 👁️ FUNCIÓN DEL OJITO VISUALIZADOR DE CONTRASEÑA
@@ -198,17 +197,17 @@
             
             if (inputPass.type === "password") {
                 inputPass.type = "text";
-                btnEye.innerText = "🔒"; // Cambia el icono para simular cierre
-                btnEye.style.color = "#007bff";
+                btnEye.innerText = "🔒"; 
+                btnEye.style.color = "#ff9800";
             } else {
                 inputPass.type = "password";
-                btnEye.innerText = "👁️"; // Vuelve al ojo abierto
+                btnEye.innerText = "👁️"; 
                 btnEye.style.color = "#888888";
             }
         }
 
         /**
-         * MOTOR DE AUTENTICACIÓN Y REDIRECCIÓN FLUIDA
+         * MOTOR DE AUTENTICACIÓN Y REDIRECCIÓN INTERCONECTADA
          */
         function procesarAccesoServidor() {
             const user = document.getElementById('inpUser').value.trim();
@@ -222,38 +221,38 @@
 
             mostrarMensaje("Sincronizando credenciales en la Nube...", "success");
 
-            // Empaquetar datos para el motor veloz (Dispatcher POST de Google)
             const paqueteLogin = {
-                accion: "loginMaster", // Intenta primero el canal maestro
+                accion: "loginMaster", 
                 usuario: user,
                 contrasena: pass
             };
 
             fetch(WEB_APP_URL, {
                 method: "POST",
-                mode: "no-cors", // Permiso universal CORS
+                mode: "no-cors", 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(paqueteLogin)
             })
             .then(() => {
-                // Como usamos mode 'no-cors' por las limitaciones de seguridad de Google Apps Script,
-                // procesamos la lógica de redirección según el nivel de usuario estipulado de forma fluida.
-                
                 mostrarMensaje("Conexión con el servidor establecida. Redireccionando...", "success");
 
-                // Filtro inteligente de saltos según la nomenclatura exacta de tu proyecto
+                // Filtro inteligente de saltos calibrado a tu nombre
                 setTimeout(() => {
-                    if (user === "elchamo" || user === "admin") {
-                        // Salto directo a la matriz original del dueño
+                    const usuarioMinuscula = user.toLowerCase();
+
+                    // REGLA DE JERARQUÍA AUTOMÁTICA DEL DUEÑO (JUAN)
+                    if (usuarioMinuscula === "juan" || usuarioMinuscula === "elchamo" || usuarioMinuscula === "admin") {
                         window.location.href = "matriz.html";
-                    } else if (user.startsWith("bodega") || user.startsWith("inquilino")) {
-                        // Salto directo a la matriz restringida del inquilino
+                    } 
+                    // REGLA PARA INQUILINOS CON CUENTAS DE ALQUILER
+                    else if (usuarioMinuscula.startsWith("bodega") || usuarioMinuscula.startsWith("inquilino") || usuarioMinuscula === "aliado") {
                         window.location.href = "inquilino.html";
-                    } else {
-                        // Salto por defecto al punto de venta de la sucursal
+                    } 
+                    // OPERADORES DE CAJA COMÚN
+                    else {
                         window.location.href = "kiosco.html";
                     }
-                }, 1500); // Espera de control para que el navegador ejecute el hilo
+                }, 1500); 
             })
             .catch(err => {
                 mostrarMensaje("Error de comunicación local: " + err.toString(), "error");
