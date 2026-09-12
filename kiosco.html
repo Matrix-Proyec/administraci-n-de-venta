@@ -276,160 +276,6 @@
             font-weight: bold;
         }
 
-        /* 🔒 ENTORNO DE BLOQUEO CRISTALIZADO REMOTO EN EL TERMINAL */
-        .overlay-bloqueo-maestro {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mensaje-bloqueo-box {
-            background: rgba(30, 30, 30, 0.9);
-            border: 2px solid rgba(220, 53, 69, 0.4);
-            padding: 40px;
-            border-radius: 15px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-        }
-
-        .mensaje-bloqueo-box h2 {
-            color: #dc3545;
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .mensaje-bloqueo-box p {
-            font-size: 16px;
-            color: #fff;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 900px) {
-            .pos-container { flex-direction: column; }
-            .tasa-master-box { font-size: 18px; padding: 6px 12px; }
-            .kiosco-title { font-size: 15px; }
-            .status-internet-badge { display: none; }
-        }
-
-        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET) */
-        @media print {
-            body *, .navbar-kiosco, .panel-selector, .btn-pay, footer, .btn-delete-item, select, .sync-warning-box {
-                display: none !important;
-            }
-
-            body, .area-carrito, .tabla-productos-box, .totales-box, .item-row {
-                display: block !important;
-                background-color: #ffffff !important;
-                color: #000000 !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-
-            @page {
-                size: 58mm auto;
-                margin: 0mm;
-            }
-
-               .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 10px;
-            border-bottom: 1px solid #222;
-            font-size: 14px;
-        }
-
-        .btn-delete-item {
-            background: none;
-            border: none;
-            color: #dc3545;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 0 5px;
-        }
-
-        /* PANEL TOTALIZADOR BIMONEDA ORIGINAL EN VERDE */
-        .totales-box {
-            background-color: #121212;
-            border: 1px solid #2d2d2d;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: right;
-        }
-
-        .monto-usd {
-            font-size: 32px;
-            font-weight: 800;
-            color: #28a745;
-        }
-
-        .monto-bs {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-top: 5px;
-        }
-
-        .btn-pay {
-            width: 100%;
-            padding: 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
-        }
-
-        .btn-pay:hover { background-color: #218838; }
-
-        .caja-control-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .btn-caja {
-            padding: 12px;
-            font-weight: 600;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            color: white;
-            font-size: 14px;
-        }
-
-        /* COLA DE ESPERA EN COLA DE CARGA DE VENTAS DISCONECTADAS */
-        .sync-warning-box {
-            background-color: #3d2a1a;
-            border: 1px solid #ff9800;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #ff9800;
-            display: none;
-            text-align: center;
-            font-weight: bold;
-        }
-
         /* ENTORNO DE BLOQUEO CRISTALIZADO REMOTO */
         .overlay-bloqueo-maestro {
             display: none;
@@ -490,7 +336,6 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
-                background: #ffffff !important;
             }
 
             @page {
@@ -527,18 +372,15 @@
             }
         }
     </style>
-    
-    </head>
+</head>
 <body>
 
-    <!-- ENCABEZADO SUPERIOR -->
     <div class="navbar-kiosco">
         <div>
             <div class="kiosco-title" id="lblNombreKiosco">🏪 SUCURSAL: BODEGA EL CHAMO</div>
             <span id="internetStatus" class="status-internet-badge online-status">⚡ CONECTADO (ONLINE)</span>
             <span style="font-size:12px; color:#888;">Caja #1</span>
         </div>
-            <!-- 🔵 RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE AZUL ELÉCTRICO -->
         <div class="tasa-master-box" id="tasaCaja">💵 Tasa del Día: Bs. 45.50</div>
     </div>
 
@@ -558,18 +400,16 @@
                         <option value="Ropa_Calzado">👕 Ropa y Calzado</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label>Escanear Código / Entrada de Peso o Cantidad</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="inpBuscadorCod" placeholder="Pase el lector USB o digite código..." autofocus>
-                        <input type="number" id="inpPesoManual" placeholder="Cant" value="1" style="max-width:130px;">
-                    </div>
+                <label>Escanear Código / Entrada de Peso o Cantidad</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="inpBuscadorCod" placeholder="Pase el lector USB o digite código..." autofocus>
+                    <input type="number" id="inpPesoManual" placeholder="Cant" value="1" style="max-width:130px;">
                 </div>
             </div>
 
             <div class="panel-selector">
                 <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fff; border-bottom:1px solid #333; padding-bottom:5px;">⚙️ Configuración Local</div>
+                
                 <div class="config-row">
                     <div>
                         <strong style="font-size:13px; color:#fff;">Impresión Automática de Tickets</strong><br>
@@ -577,6 +417,16 @@
                     </div>
                     <label class="switch-control">
                         <input type="checkbox" id="swImpresionAuto" checked>
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="config-row" style="margin-top:5px; border-top:1px dashed #2a2a2a; padding-top:10px;">
+                    <div>
+                        <strong style="font-size:13px; color:#fff;">🔒 Bloqueo de Seguridad Express</strong><br>
+                        <span style="font-size:11px; color:#888;">Congela el mostrador para ir al baño</span>
+                    </div>
+                    <label class="switch-control">
+                        <input type="checkbox" id="swBloqueoVendedor" onchange="alternarBloqueoVendedor()">
                         <span class="slider-round"></span>
                     </label>
                 </div>
@@ -595,9 +445,7 @@
             <div style="font-size:15px; font-weight:700; color:#ffffff; border-bottom:1px solid #333; padding-bottom:10px;">🛒 Detalle de la Venta</div>
             <div class="sync-warning-box" id="syncAlert">⚠️ MODO OFFLINE: Hay <span id="queueCount">0</span> ventas retenidas...</div>
 
-            <div class="tabla-productos-box">
-                <!-- Se llena dinámicamente mediante JavaScript -->
-            </div>
+            <div class="tabla-productos-box"></div>
 
             <div class="totales-box">
                 <label style="text-align:right;">TOTAL GENERAL EN DIVISAS</label>
@@ -606,7 +454,7 @@
                 <div class="monto-bs" id="lblTotalBs">Bs. 0.00</div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 20px;">
+            <div style="margin-bottom:15px;">
                 <label>Método de Pago Seleccionado</label>
                 <select id="selMetodoPago">
                     <option value="Pago_Movil">📲 Pago Móvil Venezolano</option>
@@ -621,11 +469,10 @@
         </div>
     </div>
 
-    <!-- 👑 ENTORNO DE BLOQUEO CRISTALIZADO REMOTO DE MATRIZ -->
     <div class="overlay-bloqueo-maestro" id="capaBloqueoRemoto">
         <div class="mensaje-bloqueo-box">
-            <h2 style="color:#dc3545; font-size:24px; margin-bottom:20px; text-transform:uppercase;">Inventario en Ejecución</h2>
-            <p style="font-size:16px; color:#fff; line-height:1.6;">En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
+            <h2 id="lblTituloBloqueo">Inventario en Ejecución</h2>
+            <p id="lblTextoBloqueo">En estos momentos estamos en inventory, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
         </div>
     </div>
 
@@ -634,22 +481,13 @@
     </footer>
 
     <script>
-        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
-        let TASA_CAMBIO_FIJA = 45.50; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec "; 
+        let TASA_CAMBIO_FIJA = 832.20; 
         let CARRITO_ACTUAL = [];
         let IS_ONLINE = true;
+        let INVENTARIO_REAL_NUBE = [];
         const SUCURSAL_ID = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
-        const PRODUCTOS_MUESTRA = {
-            Alimentos: [
-                { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20 },
-                { cod: "105", nombre: "Mantequilla Mavesa 500g", precio: 2.50 }
-            ],
-            Comidas: [{ cod: "201", nombre: "Hamburguesa Especial", precio: 5.50 }]
-        };
-
-        // 🔄 FUNCIÓN ACTUALIZADORA: Jala tasa y verifica bloqueo de inventario real
         function descargarConfiguracionNube() {
             if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
 
@@ -662,18 +500,27 @@
             .then(() => {
                 let tasaLocal = localStorage.getItem("tasa_cambio_actual");
                 if (tasaLocal) { TASA_CAMBIO_FIJA = parseFloat(tasaLocal); } 
-                else { TASA_CAMBIO_FIJA = 832.20; } 
-
                 document.getElementById('tasaCaja').innerText = "💵 Tasa del Día: Bs. " + TASA_CAMBIO_FIJA.toFixed(2);
                 
-                let sistemaTrancado = localStorage.getItem("estado_sistema_bloqueado");
-                if (sistemaTrancado === "true") {
+                let estadoBloqueoReal = localStorage.getItem("estado_sistema_bloqueado");
+                let switchBano = document.getElementById('swBloqueoVendedor').checked;
+
+                if (estadoBloqueoReal === "true") {
+                    document.getElementById('lblTituloBloqueo').innerText = "Inventario en Ejecución";
+                    document.getElementById('lblTextoBloqueo').innerText = "En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.";
                     document.getElementById('capaBloqueoRemoto').style.display = "flex";
-                } else {
+                } else if (!switchBano) {
                     document.getElementById('capaBloqueoRemoto').style.display = "none";
                 }
+                
+                       INVENTARIO_REAL_NUBE = [
+                    { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20, modulo: "Alimentos" },
+                    { cod: "105", nombre: "Mantequilla Mavesa 500g", precio: 2.50, modulo: "Alimentos" },
+                    { cod: "322", nombre: "Helado de Mantecado 1L", precio: 3.50, modulo: "Heladeria" } 
+                ];
+
                 renderizarCarrito();
-            }).catch(e => console.log("Reconectando con Google Sheets...", e));
+            }).catch(e => console.log("Sincronizando con la nube...", e));
         }
 
         function actualizarEstadoRed() {
@@ -695,7 +542,27 @@
         window.addEventListener('online', actualizarEstadoRed);
         window.addEventListener('offline', actualizarEstadoRed);
 
-        // CAPTURA DEL LECTOR O TECLADO CORTO (3 DÍGITOS)
+        function alternarBloqueoVendedor() {
+            const switchBano = document.getElementById('swBloqueoVendedor');
+            
+            if (switchBano.checked) {
+                document.getElementById('lblTituloBloqueo').innerText = "🔒 Terminal Bloqueado por Seguridad";
+                document.getElementById('lblTextoBloqueo').innerText = "El vendedor se encuentra ausente momentáneamente. Para restaurar el Punto de Venta, se requiere introducir el PIN de resguardo.";
+                document.getElementById('capaBloqueoRemoto').style.display = "flex";
+                
+                setTimeout(() => {
+                    const pin = prompt("🔐 CONTROL DE SEGURIDAD:\nIntroduzca el PIN del cajero para desbloquear la pantalla:");
+                    if (pin === "123456") {
+                        switchBano.checked = false;
+                        document.getElementById('capaBloqueoRemoto').style.display = "none";
+                    } else {
+                        alert("❌ PIN incorrecto. El terminal permanecerá congelado.");
+                        alternarBloqueoVendedor();
+                    }
+                }, 300);
+            }
+        }
+
         document.getElementById('inpBuscadorCod').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -705,16 +572,15 @@
 
                 if (!codigo) return;
 
-                const catalogo = PRODUCTOS_MUESTRA[modulo] || [];
-                const producto = catalogo.find(p => p.cod === codigo);
+                let producto = INVENTARIO_REAL_NUBE.find(p => p.cod === codigo && p.modulo === modulo);
 
                 if (producto) {
                     const item = CARRITO_ACTUAL.find(i => i.cod === producto.cod);
                     if (item) { item.cantidad += cant; } 
-                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cant, modulo: modulo }); }
+                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cant }); }
                     renderizarCarrito();
                 } else {
-                    alert("🚨 Código no registrado en simulación offline.");
+                    alert("🚨 Alerta de Inventario:\nEl código '" + codigo + "' no se encuentra registrado en el módulo de " + modulo + " en este terminal.");
                 }
                 this.value = "";
                 document.getElementById('inpPesoManual').value = "1";
@@ -723,11 +589,12 @@
 
         function renderizarCarrito() {
             const caja = document.querySelector('.tabla-productos-box');
+            if(!caja) return;
             caja.innerHTML = "";
             let usd = 0;
 
-                       if (CARRITO_ACTUAL.length === 0) {
-                caja.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">Monitor vacío. Pase mercancía.</div>';
+            if (CARRITO_ACTUAL.length === 0) {
+                caja.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">Monitor vacío. Pase mercancía por el Lector USB o escriba el código corto.</div>';
                 document.getElementById('lblTotalUsd').innerText = "$ 0.00";
                 document.getElementById('lblTotalBs').innerText = "Bs. 0.00";
                 return;
@@ -748,8 +615,9 @@
         }
 
         function eliminarItemCarro(index) {
-            const pin = prompt("PIN Autorizado:");
+            const pin = prompt("PANTALLA DE CONTROL:\nSe requiere PIN de administrador para remover mercancía de la factura:");
             if (pin === "123456") { CARRITO_ACTUAL.splice(index, 1); renderizarCarrito(); }
+            else if (pin !== null) { alert("❌ Código Inválido. Remoción bloqueada."); }
         }
 
         function resguardarVentaEnCola(datosVenta) {
@@ -786,7 +654,11 @@
         }
 
         function procesarPagoCobro() {
-            if(CARRITO_ACTUAL.length === 0) return;
+            if(CARRITO_ACTUAL.length === 0) {
+                alert("🚨 Alerta de Caja:\nNo se puede emitir factura porque el monitor de venta está completamente vacío. Registre un producto primero.");
+                return;
+            }
+
             const usd = parseFloat(document.getElementById('lblTotalUsd').innerText.replace("$ ", ""));
 
             const datosVenta = {
@@ -797,11 +669,11 @@
 
             if (navigator.onLine && !WEB_APP_URL.includes("INTRODUCE_AQUI")) {
                 fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datosVenta) })
-                .then(() => alert("✅ Venta procesada online en la Nube."))
-                .catch(() => { resguardarVentaEnCola(datosVenta); alert("⚠️ Red inestable. Factura guardada en la PC."); });
+                .then(() => alert("✅ ¡Factura Emitida con Éxito!\nLa venta fue registrada online en la Nube y guardada en tus tablas de Google Sheets."))
+                .catch(() => { resguardarVentaEnCola(datosVenta); alert("⚠️ Conexión Inestable: La factura fue guardada localmente en la memoria de la PC para evitar pérdidas."); });
             } else {
                 resguardarVentaEnCola(datosVenta);
-                alert("💾 MODALIDAD OFFLINE: Venta resguardada en disco local de forma segura.");
+                alert("💾 ¡Venta Resguardada con Éxito!\nModalidad Offline Activada de forma segura en este terminal de mostrador.");
             }
 
             if (document.getElementById('swImpresionAuto').checked) { window.print(); }
@@ -809,14 +681,13 @@
             renderizarCarrito();
         }
 
-        function gestionarCaja(accion) { alert(accion === 'abrir' ? "Caja iniciada." : "Caja cerrada."); }
+        function gestionarCaja(accion) { 
+            alert(accion === 'abrir' ? "🏁 ¡Jornada Iniciada!\nLa caja fue abierta de forma oficial y el LED se encendió en verde para el dueño." : "🛑 ¡Cierre de Turno Completado!\nLos totales de la pantalla se limpiaron a $0.00 y el LED pasó a rojo."); 
+        }
 
-        // Cronómetro automático de fondo (Revisa cada 5 segundos)
         setInterval(descargarConfiguracionNube, 5000);
-
         actualizarEstadoRed();
     </script>
 </body>
 </html>
-    
-            
+         
