@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Máster - Control Central El Pana</title>
+    <title>Panel de Control - Inquilino Local v1.0</title>
     
-    <!-- Etiquetas obligatorias PWA para abrir sin Internet en el Teléfono -->
+    <!-- Configuración PWA para abrir e instalar sin Internet en la Bodega -->
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -26,7 +26,7 @@
             display: flex;
         }
 
-        /* MENU LATERAL EN PC */
+        /* BARRA DE NAVEGACIÓN LATERAL COMPACTA */
         .sidebar {
             width: 260px;
             background-color: #1e1e1e;
@@ -40,13 +40,13 @@
 
         .sidebar-title {
             color: #ffffff;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 30px;
             text-align: center;
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #ff9800; /* Naranja para diferenciarlo del Máster */
             padding-bottom: 10px;
         }
 
@@ -67,7 +67,7 @@
 
         .menu-btn:hover, .menu-btn.active {
             background-color: #2a2a2a;
-            color: #007bff;
+            color: #ff9800;
         }
 
         /* CONTENIDO PRINCIPAL */
@@ -91,7 +91,7 @@
             color: #ffffff;
         }
 
-        /* INDICADOR EN VIVO DE INTERNET EN LA MATRIZ */
+        /* INDICADOR ACTIVO DE RED */
         .net-badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -102,7 +102,7 @@
         .net-online { background-color: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
         .net-offline { background-color: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid #dc3545; }
 
-        /* BOTON HAMBURGUESA EN MÓVIL */
+        /* BOTÓN HAMBURGUESA MÓVIL */
         .menu-toggle {
             display: none;
             background: #1e1e1e;
@@ -118,7 +118,7 @@
             z-index: 105;
         }
 
-        /* CARD CONTAINERS */
+        /* CARDS / CONTENEDORES */
         .grid-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -150,28 +150,40 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #aaaaaa; margin-bottom: 6px; }
         input, textarea, select { width: 100%; padding: 10px; background-color: #2a2a2a; border: 1px solid #3d3d3d; border-radius: 6px; color: #ffffff; font-size: 14px; }
+        input:focus, select:focus { border-color: #ff9800; outline: none; }
 
-        .btn-action { background-color: #007bff; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s; width: 100%; text-transform: uppercase; }
-        .btn-action:hover { background-color: #0056b3; }
-        .btn-danger { background-color: #dc3545; }
-        .btn-danger:hover { background-color: #bd2130; }
+        .btn-action { background-color: #ff9800; color: white; border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s; width: 100%; text-transform: uppercase; }
+        .btn-action:hover { background-color: #e68a00; }
 
-        /* 🔒 ESTILO DEL BOTÓN GRIS CONTROLADO POR JAVASCRIPT */
-        .btn-gris-bloqueado {
+        /* 🔒 ESTILOS EXCLUSIVOS PARA COMPONENTES INHABILITADOS (GRIS DE SEGURIDAD) */
+        .disabled-card {
+            border-color: #333333 !important;
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important; /* Desactiva clics por completo */
+        }
+        .btn-disabled {
             background-color: #444444 !important;
             color: #888888 !important;
             cursor: not-allowed !important;
         }
+        .lock-badge {
+            background-color: #333;
+            color: #ff4d4d;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #ff4d4d;
+        }
 
-        /* MONITOREO LED */
-        .kiosco-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #2a2a2a; }
+        /* RECUADRO DE MONITOREO DEL KIOSCO LOCAL */
+        .kiosco-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; }
         .kiosco-info { display: flex; align-items: center; gap: 15px; }
         .led-indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
         .led-verde { background-color: #28a745; box-shadow: 0 0 10px #28a745, 0 0 20px #28a745; }
         .led-rojo { background-color: #dc3545; box-shadow: 0 0 10px #dc3545, 0 0 20px #dc3545; }
-        .pin-container { max-width: 90px; }
 
-        /* EFECTO CRISTALIZADO DE BLOQUEO GENERAL VISUAL */
+        /* CRISTALIZADO DE BLOQUEO GENERAL POR INVENTARIO */
         .overlay-inventario {
             display: none;
             position: fixed;
@@ -182,10 +194,8 @@
             z-index: 2000;
             justify-content: center; align-items: center; padding: 20px;
         }
-
         .mensaje-bloqueo-box { background: rgba(30, 30, 30, 0.85); border: 2px solid rgba(220, 53, 69, 0.4); padding: 40px; border-radius: 15px; max-width: 600px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
         .mensaje-bloqueo-box h2 { color: #dc3545; margin-bottom: 20px; font-size: 24px; text-transform: uppercase; }
-        .mensaje-bloqueo-box p { font-size: 16px; line-height: 1.6; color: #ffffff; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -193,109 +203,111 @@
             .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 260px; }
             .sidebar.open { transform: translateX(0); }
             .main-content { padding: 20px; padding-top: 70px; }
-            .header-matriz h1 { font-size: 20px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Botón de tres rayitas para teléfonos -->
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 
+    <!-- Menú del Inquilino -->
     <div class="sidebar" id="sidebarMenu">
-        <div class="sidebar-title">Menú Máster</div>
-        <button class="menu-btn active">📊 Panel General</button>
+        <div class="sidebar-title">Matriz Local</div>
+        <button class="menu-btn active">📊 Resumen Sucursal</button>
         <button class="menu-btn">📦 Carga Mercancía</button>
-        <button class="menu-btn">🗒️ Registro Tickets</button>
-        <button class="menu-btn">👁️ Auditoría Logs</button>
-        <button class="menu-btn" onclick="document.location.reload()">🔄 Refrescar Datos</button>
+        <button class="menu-btn">🗒️ Mis Facturas</button>
+        <button class="menu-btn">👁️ Auditoría Interna</button>
+        <button class="menu-btn" onclick="document.location.reload()">🔄 Sincronizar</button>
     </div>
 
     <div class="main-content">
         
-            <!-- PESTAÑA 1: PANEL GENERAL -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 1: RESUMEN DE LA SUCURSAL (CON COMPONENTES BLOQUEADOS EN GRIS)     -->
+        <!-- ========================================================================= -->
         <div id="sectionGeneral">
             <div class="header-matriz">
-                <h1 id="txtNegocio">Cargando Sistema...</h1>
-                <span id="matrizNetBadge" class="net-badge net-online">📶 CONECTADO</span>
+                <h1 id="txtNegocioInq">Cargando Nombre Local...</h1>
+                <span id="inquilinoNetBadge" class="net-badge net-online">📶 CONECTADO</span>
             </div>
 
             <div class="grid-options">
-                <div class="card-container">
-                    <div class="card-title">💵 Gestión Cambiaria</div>
+                
+                <!-- 🔒 INHABILITADO: GESTIÓN CAMBIARIA MAESTRA (SÓLO LECTURA VISUAL) -->
+                <div class="card-container disabled-card">
+                    <div class="card-title">💵 Gestión Cambiaria <span class="lock-badge">SÓLO DUEÑO</span></div>
                     <div class="form-group">
-                        <label>Tasa del Dólar Actual (Bs.)</label>
-                        <input type="number" step="0.01" id="inpTasa" value="832.20">
+                        <label>Tasa del Dólar Oficial (Fijada por RJ-Profecional)</label>
+                        <input type="number" id="inpTasa" value="45.50" disabled style="color: #666;">
                     </div>
                     <div class="form-group">
-                        <label>Contingencia Monetaria Futura</label>
-                        <select id="selMoneda">
-                            <option value="Multimoneda">Multimoneda ($ y Bs)</option>
-                            <option value="Solo_Bs">Solo Bolívares (Remoción USD)</option>
-                            <option value="Solo_Usd">Solo Dólares (Dolarización Real)</option>
+                        <label>Contingencia Monetaria Activa</label>
+                        <select disabled style="color: #666;">
+                            <option>Multimoneda ($ y Bs)</option>
                         </select>
                     </div>
-                    <button class="btn-action" onclick="guardarEconomia()">Guardar Parámetros Financieros</button>
+                    <button class="btn-mantenimiento btn-disabled" style="width:100%; padding:10px; border-radius:6px; border:none;">Cambio Restringido</button>
                 </div>
 
+                             <!-- ✅ ACTIVO: MONITOREO DE SU UNICO KIOSCO -->
                 <div class="card-container">
-                    <div class="card-title">🏪 Monitoreo de Kioscos</div>
+                    <div class="card-title">🏪 Estado Operativo de Caja</div>
                     <div id="contenedorKioscos">
                         <div class="kiosco-row">
                             <div class="kiosco-info">
-                                <span class="led-indicator led-verde" id="led-DRON-01"></span>
+                                <span class="led-indicator led-verde" id="ledKioscoLocal"></span>
                                 <div>
-                                    <strong style="color:#fff;">El Chamaco</strong><br>
-                                    <span style="font-size:11px; color:#aaa;">ID: DRON-01 | Ini: 08:00 AM</span>
+                                    <strong style="color:#fff;" id="lblNombreKiosco">Mi Bodega</strong><br>
+                                    <span style="font-size:11px; color:#aaa;" id="lblIdSucursal">ID: KIO-01</span>
                                 </div>
                             </div>
-                            <div class="pin-container">
-                                <label style="font-size:10px;">PIN Local</label>
-                                <input type="password" class="pin-input" value="123456" id="pin-DRON-01">
+                            <div style="text-align: right;">
+                                <span style="font-size:11px; color:#aaa;">Venta Hoy</span><br>
+                                <strong style="color:#28a745; font-size:16px;" id="lblVentaHoyUsd">$ 0.00</strong>
                             </div>
                         </div>
                     </div>
-                    <button class="btn-action" style="margin-top:15px; background-color:#28a745;" onclick="actualizarPinesLocales()">Actualizar PINes de Cajas</button>
+                    <p style="font-size:11px; color:#888; margin-top:15px; text-align:center; border-top:1px solid #2a2a2a; padding-top:10px;">
+                        Para modificar el PIN de ventas de su caja, debe comunicarse con el administrador central.
+                    </p>
                 </div>
 
-                <div class="card-container">
-                    <div class="card-title">📝 Datos Identidad del Negocio</div>
+                <!-- 🔒 INHABILITADO: IDENTIDAD (SÓLO LECTURA VISUAL) -->
+                <div class="card-container disabled-card">
+                    <div class="card-title">📝 Datos Identidad Legal <span class="lock-badge">SÓLO DUEÑO</span></div>
                     <div class="form-group">
-                        <label>RIF / Código Fiscal</label>
-                        <input type="text" id="inpRif" value="J-12345678-9">
+                        <label>RIF Comercial</label>
+                        <input type="text" value="J-12345678-9" disabled style="color: #666;">
                     </div>
                     <div class="form-group">
-                        <label>Ciudad y Parroquia</label>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="inpCiudad" value="Ciudad Bolívar">
-                            <input type="text" id="inpParroquia" value="La Sabanita">
-                        </div>
+                        <label>Ubicación Geográfica</label>
+                        <input type="text" value="Ciudad Bolívar" disabled style="color: #666;">
                     </div>
-                    <div class="form-group">
-                        <label>Pie de Página Web (Texto Fijo)</label>
-                        <textarea id="inpFooter" rows="2">© 2026 El Pana - Todos los derechos reservados.</textarea>
-                    </div>
-                    <button class="btn-action" onclick="guardarDatosIdentidad()">Guardar Cambios de Cabecera</button>
+                    <button class="btn-mantenimiento btn-disabled" style="width:100%; padding:10px; border-radius:6px; border:none;">Modificación Denegada</button>
                 </div>
             </div>
 
-            <div class="card-container" style="border-color: #dc3545; margin-top: 25px;">
-                <div class="card-title" style="color: #dc3545;">🚨 Control Operativo del Sistema Completo</div>
-                <p style="font-size: 13px; color: #aaaaaa; margin-bottom: 15px;">
-                    Al activar el bloqueo de inventario, todos los módulos de ventas en los kioscos se congelarán instantáneamente desplegando el fondo cristalizado con el mensaje de advertencia.
+            <!-- 🔒 INHABILITADO: CONTROL GENERAL (SÓLO LECTURA VISUAL) -->
+            <div class="card-container disabled-card" style="margin-top: 25px;">
+                <div class="card-title" style="color: #666;">🚨 Control Operativo del Sistema General <span class="lock-badge">SÓLO DUEÑO</span></div>
+                <p style="font-size: 13px; color: #555; margin-bottom: 15px;">
+                    El bloqueo general por auditoría de inventario solo puede ser activado y removido de manera remota por el desarrollador máster.
                 </p>
                 <div style="display: flex; gap: 15px;">
-                    <button class="btn-action btn-danger" id="btnActivarBloqueo" onclick="alternarBloqueoSistema('Inventario_Bloqueado')">Activar Bloqueo por Inventario</button>
-                    <button class="btn-action btn-gris-bloqueo btn-disabled" id="btnQuitarBloqueo" disabled onclick="alternarBloqueoSistema('Activo')">Quitar Bloqueo General</button>
+                    <button class="btn-mantenimiento btn-disabled" style="padding:10px; border-radius:6px; border:none; flex:1;">Bloqueo Desactivado</button>
                 </div>
             </div>
         </div>
 
-        <!-- PESTAÑA 2: CARGA DE MERCANCÍA -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 2: CARGA DE MERCANCÍA (FORMULARIO INTELIGENTE ACTIVO)             -->
+        <!-- ========================================================================= -->
         <div id="sectionCarga" class="card-container" style="display: none; max-width: 800px; margin: 0 auto;">
-            <div class="card-title">📦 Inventario Maestro - Cargar Nueva Mercancía</div>
+            <div class="card-title" style="color: #ff9800;">📦 Mi Inventario - Cargar Nueva Mercancía</div>
             
             <div class="form-group">
-                <label>Seleccione el Módulo de Destino</label>
+                <label>Seleccione el Módulo de Destino de este Producto</label>
                 <select id="regModulo" onchange="adaptarFormularioCarga()">
                     <option value="Alimentos">🍎 Alimentos (Víveres / Abarrotes)</option>
                     <option value="Comidas">🍔 Comidas (Restaurante / Cafetería)</option>
@@ -308,22 +320,14 @@
                 </select>
             </div>
 
-            <div class="grid-options" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div class="form-group">
-                    <label>Código de Barras / ID Único (Lector USB)</label>
-                    <input type="text" id="regCodigo" placeholder="Escanee o asigne código">
-                </div>
-                <div class="form-group">
-                    <label>Asignar a Sucursal</label>
-                    <select id="regSucursal">
-                        <option value="DRON-01">El Chamaco (DRON-01)</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label>Código de Barras / ID Corto de 3 Dígitos (Tipeado o Lector)</label>
+                <input type="text" id="regCodigo" placeholder="Ej: 7591234567890 o código corto '105'">
             </div>
 
             <div class="form-group">
                 <label>Nombre Detallado de la Mercancía</label>
-                <input type="text" id="regNombre" placeholder="Ej: Helado de Mantecado 1L">
+                <input type="text" id="regNombre" placeholder="Ej: Mantequilla Mavesa 500g">
             </div>
 
             <div class="grid-options" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;">
@@ -332,11 +336,11 @@
                     <input type="number" step="0.01" id="regCosto" oninput="calcularPrecioSugerido()">
                 </div>
                 <div class="form-group">
-                    <label>Margen de Ganancia (%)</label>
+                    <label>Su Margen de Ganancia (%)</label>
                     <input type="number" id="regPorcentaje" value="30" oninput="calcularPrecioSugerido()">
                 </div>
                 <div class="form-group">
-                    <label>Precio Venta Sugerido ($)</label>
+                    <label>Precio Venta Calculado ($)</label>
                     <input type="number" step="0.01" id="regPrecioVenta" readonly style="background-color: #121212; color: #28a745; font-weight: bold;">
                 </div>
             </div>
@@ -344,11 +348,11 @@
             <div id="camposVariantes" class="grid-options" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="form-group" id="divTalla" style="display:none;">
                     <label>Talla / Tamaño</label>
-                    <input type="text" id="regTalla" placeholder="Ej: M o 41">
+                    <input type="text" id="regTalla" placeholder="Ej: L o 42">
                 </div>
                 <div class="form-group" id="divColor" style="display:none;">
                     <label>Color</label>
-                    <input type="text" id="regColor" placeholder="Ej: Azul">
+                    <input type="text" id="regColor" placeholder="Ej: Negro">
                 </div>
                 <div class="form-group" id="divVentaModo" style="display:none;">
                     <label>Modo de Venta</label>
@@ -363,159 +367,96 @@
                 </div>
                 <div class="form-group" id="divOem" style="display:none;">
                     <label>Código Fábrica / OEM</label>
-                    <input type="text" id="regOem" placeholder="Ej: 5HH-H1960-00">
+                    <input type="text" id="regOem" placeholder="Ej: 5HH-00">
                 </div>
             </div>
 
             <div class="grid-options" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <div class="form-group">
-                    <label>Cantidad en Stock Inicial</label>
+                    <label>Cantidad Inicial en Estantería</label>
                     <input type="number" id="regStock" value="1">
                 </div>
                 <div class="form-group">
-                    <label>Mínimo Crítico (Alerta Almacén)</label>
+                    <label>Mínimo Crítico (Alerta de Almacén)</label>
                     <input type="number" id="regMinimo" value="5">
                 </div>
             </div>
 
-            <button class="btn-action" style="background-color: #007bff; margin-top: 15px;" onclick="guardarMercanciaMaestra()">Registrar Producto en Sistema</button>
+            <button class="btn-action" style="margin-top: 15px;" onclick="guardarMercanciaInquilino()">Registrar en Mi Inventario</button>
         </div>
 
-              <!-- PESTAÑA 3: REGISTRO HISTÓRICO DE TICKETS -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 3: HISTORIAL DE FACTURAS LOCAL ACTIVO                             -->
+        <!-- ========================================================================= -->
         <div id="sectionTickets" class="card-container" style="display: none;">
-            <div class="card-title">🗒️ Registro Histórico de Tickets Emitidos</div>
-            <div class="form-group" style="max-width: 400px; margin-bottom: 20px;">
-                <label>Buscador Rápido de Facturas (ID Ticket o Sucursal)</label>
-                <input type="text" id="searchTicket" placeholder="Escriba para filtrar...">
-            </div>
+            <div class="card-title">🗒️ Historial de Facturas de Mi Sucursal</div>
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                     <thead>
                         <tr style="border-bottom: 2px solid #333; color: #ffffff;">
                             <th style="padding: 10px;">ID Ticket</th>
-                            <th style="padding: 10px;">Sucursal</th>
                             <th style="padding: 10px;">Fecha / Hora</th>
                             <th style="padding: 10px;">Total ($)</th>
                             <th style="padding: 10px;">Total (Bs)</th>
-                            <th style="padding: 10px;">Método Pago</th>
+                            <th style="padding: 10px;">Método Cobrado</th>
                         </tr>
                     </thead>
-                    <tbody id="tablaTicketsBody">
+                    <tbody id="tablaTicketsInqBody">
                         <tr style="border-bottom: 1px solid #222;">
-                            <td style="padding: 10px; color: #007bff; font-weight: bold;">TKT-1001</td>
-                            <td style="padding: 10px;">DRON-01 (El Chamaco)</td>
-                            <td style="padding: 10px;">12/09/2026 06:30 PM</td>
-                            <td style="padding: 10px; color: #28a745; font-weight: bold;">$ 12.40</td>
-                            <td style="padding: 10px;">Bs. 10319.28</td>
-                            <td style="padding: 10px;"><span style="background:#2a2a2a; padding:4px 8px; border-radius:4px; font-size:12px;">Pago Móvil</span></td>
+                            <td style="padding: 10px; color: #ff9800; font-weight: bold;">TKT-884521</td>
+                            <td style="padding: 10px;">12/09/2026 09:15 AM</td>
+                            <td style="padding: 10px; color: #28a745; font-weight: bold;">$ 14.50</td>
+                            <td style="padding: 10px;">Bs. 660.00</td>
+                            <td style="padding: 10px;"><span style="background:#2a2a2a; padding:4px 8px; border-radius:4px;">Pago Móvil</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 4: AUDITORÍA INTERNA DE MI PERSONAL                               -->
+        <!-- ========================================================================= -->
         <div id="sectionAuditoria" class="card-container" style="display: none;">
-            <div class="card-title" style="color: #dc3545;">👁️ Historial de Auditoría Inalterable</div>
-            <div style="max-height: 400px; overflow-y: auto; background: #121212; padding: 15px; border-radius: 6px; border: 1px solid #2d2d2d; font-family: monospace; font-size: 13px; line-height: 1.5;">
-                <div id="logList">
-                    <span style="color: #888;">[12/09/2026 08:05:12 AM]</span> <span style="color: #28a745;">[DRON-01]</span> <span style="color: #007bff; font-weight:bold;">[INICIO CAJA]</span>: El usuario juan inició la jornada con éxito.
-                </div>
+            <div class="card-title" style="color: #ff9800;">👁️ Auditoría Interna de Mi Personal</div>
+            <div style="max-height: 400px; overflow-y: auto; background: #121212; padding: 15px; border-radius: 6px; border: 1px solid #2d2d2d; font-family: monospace; font-size: 13px; line-height: 1.5;" id="logListInq">
+                <div><span style="color: #888;">[12/09/2026 08:00:05 AM]</span> <span style="color: #ff9800;">[MI_CAJA]</span> <span style="color: #007bff; font-weight:bold;">[APERTURA]</span>: Jornada de ventas iniciada por el operador.</div>
             </div>
         </div>
-    </div>
+    </div> <!-- Fin main-content -->
 
+    <!-- CRISTALIZADO DE BLOQUEO GENERAL POR INVENTARIO -->
     <div class="overlay-inventario" id="pantallaCristal">
         <div class="mensaje-bloqueo-box">
-            <h2>Inventario en Ejecución</h2>
-            <p>En estos momentos el panel máster está enviando la orden de bloqueo a los terminales de las bodegas. Espere un momento...</p>
-            <button class="btn-action" style="margin-top: 25px; width: auto; padding: 10px 30px;" onclick="quitarCristalPrueba()">Entendido</button>
+            <h2>Auditoría General en Curso</h2>
+            <p>Estimado Aliado, en estos momentos estamos ejecutando el cierre de inventario centralizado. El sistema operativo se restablecerá de forma automática en breve. Gracias por su valiosa paciencia.</p>
         </div>
     </div>
 
     <script>
-        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
+        // Enlace del motor oculto de Google Apps Script (Mismo servidor central)
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
+        
+        // ID de la sucursal del inquilino capturado automáticamente desde el login
+        const SUCURSAL_ID_ACTIVA = localStorage.getItem("inquilino_sucursal_id") || "KIO-01";
 
-        function vigilarRedMatriz() {
-            const badge = document.getElementById('matrizNetBadge');
+        // 1. VIGILANTE DE RECONEXIÓN AUTOMÁTICA EN MATRIZ DE INQUILINO
+        function vigilarRedInquilino() {
+            const badge = document.getElementById('inquilinoNetBadge');
             if (navigator.onLine) {
-                badge.innerText = "📶 CONECTADO";
+                badge.innerText = "📶 ONLINE";
                 badge.className = "net-badge net-online";
-                descargarDatosDesdeSheets();
+                console.log("Señal restablecida. Sincronizando datos de mi sucursal...");
             } else {
-                badge.innerText = "🚨 SIN SEÑAL";
+                badge.innerText = "🚨 OFFLINE";
                 badge.className = "net-badge net-offline";
             }
         }
 
-        window.addEventListener('online', vigilarRedMatriz);
-        window.addEventListener('offline', vigilarRedMatriz);
+        window.addEventListener('online', vigilarRedInquilino);
+        window.addEventListener('offline', vigilarRedInquilino);
 
-        function descargarDatosDesdeSheets() {
-            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
-
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ accion: "obtenerMatriz" })
-            })
-            .then(() => {
-                console.log("Conexión con Google Sheets exitosa.");
-                document.getElementById('txtNegocio').innerText = "El Pana - Control Central Blindado";
-                localStorage.setItem("tasa_cambio_actual", "832.20");
-            })
-            .catch(err => console.log("Reconectando...", err));
-        }
-
-        /**
-         * 🚨 CONTROL OPERATIVO REAL DE BLOQUEO INTERCONECTADO CON EL KIOSCO
-         */
-        function alternarBloqueoSistema(estado) {
-            const btnActivar = document.getElementById('btnActivarBloqueo');
-            const btnQuitar = document.getElementById('btnQuitarBloqueo');
-
-            if (estado === 'Inventario_Bloqueado') {
-                localStorage.setItem("estado_sistema_bloqueado", "true");
-                
-                btnActivar.disabled = true;
-                btnActivar.style.opacity = "0.4";
-                
-                btnQuitar.disabled = false;
-                btnQuitar.className = "btn-action"; 
-                
-                document.getElementById('pantallaCristal').style.display = 'flex';
-                
-                enviarOrdenBloqueoAlSheets("Inventario_Bloqueado");
-            } else {
-                localStorage.setItem("estado_sistema_bloqueado", "false");
-                
-                btnActivar.disabled = false;
-                btnActivar.style.opacity = "1";
-                
-                btnQuitar.disabled = true;
-                btnQuitar.className = "btn-action btn-gris-bloqueado"; 
-                
-                document.getElementById('pantallaCristal').style.display = 'none';
-                
-                enviarOrdenBloqueoAlSheets("Activo");
-            }
-        }
-
-        function enviarOrdenBloqueoAlSheets(estadoLetra) {
-            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
-            
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ accion: "cambiarEstado", nuevoEstado: estadoLetra })
-            });
-        }
-
-        function quitarCristalPrueba() { document.getElementById('pantallaCristal').style.display = 'none'; }
-
-        // NAVEGACIÓN SPA
+        // 2. SISTEMA INTERCAMBIO RAPIDO DE PESTAÑAS (SPA)
         const botonesMenu = document.querySelectorAll('.menu-btn');
         const paneles = {
             0: document.getElementById('sectionGeneral'),
@@ -528,12 +469,18 @@
             btn.addEventListener('click', () => {
                 botonesMenu.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                
                 Object.values(paneles).forEach(p => { if(p) p.style.display = 'none'; });
-                if (paneles[index]) paneles[index].style.display = 'block';
+                
+                if (paneles[index]) {
+                    paneles[index].style.display = 'block';
+                    if(index === 1) adaptarFormularioCarga();
+                }
                 document.getElementById('sidebarMenu').classList.remove('open');
             });
         });
 
+        // 3. ADAPTACIÓN INTELIGENTE DE CAMPOS DE CARGA LOCAL
         function adaptarFormularioCarga() {
             const modulo = document.getElementById('regModulo').value;
             document.getElementById('divTalla').style.display = 'none';
@@ -561,16 +508,27 @@
         }
 
         function toggleMenu() { document.getElementById('sidebarMenu').classList.toggle('open'); }
-        function guardarMercanciaMaestra() { alert("Producto enviado al Inventario Maestro en la Nube."); }
-        function guardarEconomia() { 
-            const val = parseFloat(document.getElementById('inpTasa').value) || 832.20;
-            localStorage.setItem("tasa_cambio_actual", val.toString());
-            alert("💵 Parámetro financiero guardado: Bs. " + val); 
-        }
-        function actualizarPinesLocales() { alert("PINes actualizados."); }
-        function guardarDatosIdentidad() { alert("Identidad guardada."); }
 
-        vigilarRedMatriz();
+        // 4. ENVÍO DE MERCANCÍA PROTEGIDA AL SHEETS
+        function guardarMercanciaInquilino() {
+            const cod = document.getElementById('regCodigo').value.trim();
+            const nom = document.getElementById('regNombre').value.trim();
+            const cost = document.getElementById('regCosto').value;
+            const porc = document.getElementById('regPorcentaje').value;
+            const prec = document.getElementById('regPrecioVenta').value;
+
+            if(!cod || !nom || !cost) { alert("Por favor complete los campos obligatorios."); return; }
+
+            alert("Enviando producto al inventario maestro...\nInyectando ID: " + SUCURSAL_ID_ACTIVA + " de manera blindada.");
+        }
+
+        function actualizarPinesLocales() {}
+        function guardarDatosIdentidad() {}
+        function guardarEconomia() {}
+        function alternarBloqueoSistema(estado) {}
+
+        // Inicializar revisando el estatus de la red en Venezuela
+        vigilarRedInquilino();
     </script>
 </body>
 </html>

@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto de Venta - Kiosco Blindado Anti-Fallas</title>
+    <title>Punto de Venta - El Pana Máster Control v1.0</title>
     
-    <!-- Configuración básica para simular PWA nativa en Teléfonos y PC -->
+    <!-- Configuración PWA nativa para entornos de contingencia en Venezuela -->
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
     <style>
         /* ========================================================================= */
-        /* ESTILOS DE INTERFAZ PROFESIONAL OSCURA (ENTORNO KIOSCO)                  */
+        /* ESTILOS DE INTERFAZ PROFESIONAL OSCURA ORIGINAL (ENTORNO KIOSCO)          */
         /* ========================================================================= */
         * {
             margin: 0;
@@ -63,7 +63,7 @@
             0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
         }
 
-        /* RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE */
+        /* RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE ORIGINAL */
         .tasa-master-box {
             background-color: #1a2436;
             border: 2px solid #007bff;
@@ -206,7 +206,7 @@
             padding: 0 5px;
         }
 
-        /* PANEL TOTALIZADOR BIMONEDA */
+        /* PANEL TOTALIZADOR BIMONEDA ORIGINAL EN VERDE */
         .totales-box {
             background-color: #121212;
             border: 1px solid #2d2d2d;
@@ -276,38 +276,50 @@
             font-weight: bold;
         }
 
-        /* ENTORNO DE BLOQUEO CRISTALIZADO */
-        .cristal-bloqueo {
+        /* 🔒 ENTORNO DE BLOQUEO CRISTALIZADO REMOTO EN EL TERMINAL */
+        .overlay-bloqueo-maestro {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 5000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 9999;
             justify-content: center;
             align-items: center;
         }
 
-        .mensaje-bloqueo-kio {
-            background-color: rgba(30,30,30,0.9);
-            border: 1px solid #3d3d3d;
-            padding: 35px;
-            border-radius: 12px;
+        .mensaje-bloqueo-box {
+            background: rgba(30, 30, 30, 0.9);
+            border: 2px solid rgba(220, 53, 69, 0.4);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 500px;
             text-align: center;
-            max-width: 450px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .mensaje-bloqueo-box h2 {
+            color: #dc3545;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .mensaje-bloqueo-box p {
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.6;
         }
 
         @media (max-width: 900px) {
             .pos-container { flex-direction: column; }
             .tasa-master-box { font-size: 18px; padding: 6px 12px; }
             .kiosco-title { font-size: 15px; }
+            .status-internet-badge { display: none; }
         }
 
-        /* ========================================================================= */
-        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET 58MM O 80MM)       */
-        /* ========================================================================= */
+        /* 🖨️ CONFIGURACIÓN TÉCNICA FORZADA DE IMPRESIÓN (TICKET) */
         @media print {
             body *, .navbar-kiosco, .panel-selector, .btn-pay, footer, .btn-delete-item, select, .sync-warning-box {
                 display: none !important;
@@ -329,7 +341,7 @@
                 margin: 0mm;
             }
 
-                 .item-row {
+               .item-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -348,7 +360,7 @@
             padding: 0 5px;
         }
 
-        /* PANEL TOTALIZADOR BIMONEDA */
+        /* PANEL TOTALIZADOR BIMONEDA ORIGINAL EN VERDE */
         .totales-box {
             background-color: #121212;
             border: 1px solid #2d2d2d;
@@ -418,33 +430,47 @@
             font-weight: bold;
         }
 
-        /* ENTORNO DE BLOQUEO CRISTALIZADO */
-        .cristal-bloqueo {
+        /* ENTORNO DE BLOQUEO CRISTALIZADO REMOTO */
+        .overlay-bloqueo-maestro {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 5000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 9999;
             justify-content: center;
             align-items: center;
         }
 
-        .mensaje-bloqueo-kio {
-            background-color: rgba(30,30,30,0.9);
-            border: 1px solid #3d3d3d;
-            padding: 35px;
-            border-radius: 12px;
+        .mensaje-bloqueo-box {
+            background: rgba(30, 30, 30, 0.9);
+            border: 2px solid rgba(220, 53, 69, 0.4);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 500px;
             text-align: center;
-            max-width: 450px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .mensaje-bloqueo-box h2 {
+            color: #dc3545;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .mensaje-bloqueo-box p {
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.6;
         }
 
         @media (max-width: 900px) {
             .pos-container { flex-direction: column; }
             .tasa-master-box { font-size: 18px; padding: 6px 12px; }
             .kiosco-title { font-size: 15px; }
+            .status-internet-badge { display: none; }
         }
 
         /* ========================================================================= */
@@ -464,6 +490,7 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
+                background: #ffffff !important;
             }
 
             @page {
@@ -500,24 +527,27 @@
             }
         }
     </style>
-</head>
+    
+    </head>
 <body>
 
+    <!-- ENCABEZADO SUPERIOR -->
     <div class="navbar-kiosco">
         <div>
             <div class="kiosco-title" id="lblNombreKiosco">🏪 SUCURSAL: BODEGA EL CHAMO</div>
             <span id="internetStatus" class="status-internet-badge online-status">⚡ CONECTADO (ONLINE)</span>
             <span style="font-size:12px; color:#888;">Caja #1</span>
         </div>
+            <!-- 🔵 RECUADRO DE LA TASA EN GRANDE Y ALTO CONTRASTE AZUL ELÉCTRICO -->
         <div class="tasa-master-box" id="tasaCaja">💵 Tasa del Día: Bs. 45.50</div>
     </div>
 
     <div class="pos-container">
         <div class="area-catalogo">
             <div class="panel-selector">
-                <div class="form-group" style="margin-bottom:15px;">
+                <div style="margin-bottom:15px;">
                     <label>Módulo de Venta Individual Activo</label>
-                    <select id="selModuloKiosco" onchange="cambiarModuloLógica()">
+                    <select id="selModuloKiosco">
                         <option value="Alimentos">🍎 Alimentos (Víveres / Abarrotes)</option>
                         <option value="Comidas">🍔 Comidas (Restaurante / Cafetería)</option>
                         <option value="Bebidas">🥤 Bebidas</option>
@@ -539,28 +569,7 @@
             </div>
 
             <div class="panel-selector">
-                <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fff; border-bottom:1px solid #333; padding-bottom:5px;">⚙️ Configuración y Switches Locales</div>
-                
-                <div class="config-row">
-                    <div>
-                        <strong style="font-size:13px; color:#fff;">Pausar Módulo de Ventas</strong><br>
-                        <span style="font-size:11px; color:#888;">Bloquea localmente el terminal por seguridad</span>
-                    </div>
-                    <label class="switch-control">
-                        <input type="checkbox" id="swBloqueoLocal" onchange="controlSwBloqueoLocal()">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="config-row">
-                    <div>
-                        <strong style="font-size:13px; color:#fff;">Modo de Vista Catálogo</strong><br>
-                        <span style="font-size:11px; color:#888;">Apagado: Lista | Encendido: Cuadrícula (Grid)</span>
-                    </div>
-                    <label class="switch-control">
-                        <input type="checkbox" id="swModoVista">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
+                <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:#fff; border-bottom:1px solid #333; padding-bottom:5px;">⚙️ Configuración Local</div>
                 <div class="config-row">
                     <div>
                         <strong style="font-size:13px; color:#fff;">Impresión Automática de Tickets</strong><br>
@@ -582,11 +591,9 @@
             </div>
         </div>
 
-             <!-- ÁREA DERECHA: CALCULADORA Y TOTALES -->
         <div class="area-carrito">
-            <div style="font-size:15px; font-weight:700; color:#ffffff; border-bottom:1px solid #333; padding-bottom:10px;">🛒 Detalle de la Venta / Monitor Activo</div>
-            
-            <div class="sync-warning-box" id="syncAlert">⚠️ MODO FUERA DE LÍNEA: Hay <span id="queueCount">0</span> ventas resguardadas esperando señal...</div>
+            <div style="font-size:15px; font-weight:700; color:#ffffff; border-bottom:1px solid #333; padding-bottom:10px;">🛒 Detalle de la Venta</div>
+            <div class="sync-warning-box" id="syncAlert">⚠️ MODO OFFLINE: Hay <span id="queueCount">0</span> ventas retenidas...</div>
 
             <div class="tabla-productos-box">
                 <!-- Se llena dinámicamente mediante JavaScript -->
@@ -607,7 +614,6 @@
                     <option value="Efectivo_Bs">💱 Efectivo (Bolívares)</option>
                     <option value="Punto_Debito">💳 Punto de Venta / Débito</option>
                     <option value="Biopago_Huella">👤 Biopago / Huella Digital</option>
-                    <option value="Credito_Fiar">📝 Cuenta a Crédito (Fiar Autorizado)</option>
                 </select>
             </div>
 
@@ -615,47 +621,68 @@
         </div>
     </div>
 
-    <!-- PANTALLA FLOTANTE CON EFECTO CRISTALIZADO DE PAUSA LOCAL -->
-    <div class="cristal-bloqueo" id="capaBloqueoLocal">
-        <div class="mensaje-bloqueo-kio">
-            <h2 style="color:#dc3545; font-size:22px; margin-bottom:15px; text-transform:uppercase;">Terminal En Pausa</h2>
-            <p style="font-size:15px; color:#fff; margin-bottom:20px;">Módulo pausado temporalmente por administración local. Introduzca el PIN autorizado para reanudar operaciones.</p>
-            <input type="password" id="inpPinDesbloqueo" placeholder="Introduzca PIN de 6 dígitos" style="text-align:center; max-width:220px; margin-bottom:20px;">
-            <button class="btn-pay" style="padding:10px 20px; font-size:14px;" onclick="verificarDesbloqueoLocal()">Desbloquear Caja</button>
+    <!-- 👑 ENTORNO DE BLOQUEO CRISTALIZADO REMOTO DE MATRIZ -->
+    <div class="overlay-bloqueo-maestro" id="capaBloqueoRemoto">
+        <div class="mensaje-bloqueo-box">
+            <h2 style="color:#dc3545; font-size:24px; margin-bottom:20px; text-transform:uppercase;">Inventario en Ejecución</h2>
+            <p style="font-size:16px; color:#fff; line-height:1.6;">En estos momentos estamos en inventario, por favor nuestro sistema en breve momento estará activo. Gracias por su valiosa paciencia.</p>
         </div>
     </div>
 
-    <footer style="background-color:#1e1e1e; padding:10px; border-top:1px solid #2d2d2d; text-align:center; font-size:12px; color:#666;" id="footerAppWeb">
-        © 2026 Corporación El Chamo - Todos los derechos reservados.
+    <footer style="background-color:#1e1e1e; padding:10px; border-top:1px solid #2d2d2d; text-align:center; font-size:12px; color:#666;">
+        © 2026 El Pana Máster Control v1.0 - Todos los derechos reservados.
     </footer>
 
     <script>
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
-        const TASA_CAMBIO_FIJA = 45.50;
+        // Sincronización exacta con tu Apps Script en Google Drive (Coloca tu URL real /exec aquí)
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
+        let TASA_CAMBIO_FIJA = 45.50; 
         let CARRITO_ACTUAL = [];
         let IS_ONLINE = true;
+        const SUCURSAL_ID = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
         const PRODUCTOS_MUESTRA = {
             Alimentos: [
-                { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20, modo: "Unidad" },
-                { cod: "7591112223334", nombre: "Harina Pan 1Kg", precio: 1.10, modo: "Unidad" }
+                { cod: "7591234567890", nombre: "Arroz Primor 1Kg", precio: 1.20 },
+                { cod: "105", nombre: "Mantequilla Mavesa 500g", precio: 2.50 }
             ],
-            Comidas: [{ cod: "COM-01", nombre: "Hamburguesa Especial", precio: 5.50, modo: "Unidad" }],
-            Bebidas: [{ cod: "BEB-01", nombre: "Refresco Coca-Cola 2L", precio: 2.50, modo: "Unidad" }],
-            Repuestos_Elec: [{ cod: "7598889990001", nombre: "Radio Portátil Recargable", precio: 15.00, modo: "Unidad" }],
-            Repuestos_Moto: [{ cod: "MOT-01", nombre: "Pastillas de Freno Owen", precio: 4.50, modo: "Unidad" }],
-            Embutidos: [{ cod: "EMB-01", nombre: "Jamón Ahumado Superior", precio: 7.00, modo: "Kilo" }],
-            Heladeria: [{ cod: "HEL-01", nombre: "Barquilla Mantecado", precio: 1.50, modo: "Unidad" }],
-            Ropa_Calzado: [{ cod: "ROP-01", nombre: "Franela Básica Azul M", precio: 12.00, modo: "Unidad" }]
+            Comidas: [{ cod: "201", nombre: "Hamburguesa Especial", precio: 5.50 }]
         };
+
+        // 🔄 FUNCIÓN ACTUALIZADORA: Jala tasa y verifica bloqueo de inventario real
+        function descargarConfiguracionNube() {
+            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ accion: "obtenerMatriz" })
+            })
+            .then(() => {
+                let tasaLocal = localStorage.getItem("tasa_cambio_actual");
+                if (tasaLocal) { TASA_CAMBIO_FIJA = parseFloat(tasaLocal); } 
+                else { TASA_CAMBIO_FIJA = 832.20; } 
+
+                document.getElementById('tasaCaja').innerText = "💵 Tasa del Día: Bs. " + TASA_CAMBIO_FIJA.toFixed(2);
+                
+                let sistemaTrancado = localStorage.getItem("estado_sistema_bloqueado");
+                if (sistemaTrancado === "true") {
+                    document.getElementById('capaBloqueoRemoto').style.display = "flex";
+                } else {
+                    document.getElementById('capaBloqueoRemoto').style.display = "none";
+                }
+                renderizarCarrito();
+            }).catch(e => console.log("Reconectando con Google Sheets...", e));
+        }
 
         function actualizarEstadoRed() {
             IS_ONLINE = navigator.onLine;
             const badge = document.getElementById('internetStatus');
-            
             if (IS_ONLINE) {
                 badge.innerText = "⚡ CONECTADO (ONLINE)";
                 badge.className = "status-internet-badge online-status";
+                descargarConfiguracionNube();
                 procesarColaEspera();
             } else {
                 badge.innerText = "🚨 SIN SEÑAL (OFFLINE)";
@@ -668,67 +695,29 @@
         window.addEventListener('online', actualizarEstadoRed);
         window.addEventListener('offline', actualizarEstadoRed);
 
-        function resguardarVentaEnCola(datosVenta) {
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
-            cola.push(datosVenta);
-            localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
-            verificarContadorCola();
-        }
-
-        function verificarContadorCola() {
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
-            const alerta = document.getElementById('syncAlert');
-            const contador = document.getElementById('queueCount');
-            
-            if (cola.length > 0) {
-                alerta.style.display = "block";
-                contador.innerText = cola.length;
-            } else if (IS_ONLINE) {
-                alerta.style.display = "none";
-            }
-        }
-
-        function procesarColaEspera() {
-            if (!navigator.onLine) return;
-            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
-            if (cola.length === 0) return;
-
-            const venta = cola[0];
-            
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(venta)
-            }).then(() => {
-                cola.shift();
-                localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
-                verificarContadorCola();
-                procesarColaEspera();
-            }).catch(e => console.log("Señal inestable, reintentando luego...", e));
-        }
-
+        // CAPTURA DEL LECTOR O TECLADO CORTO (3 DÍGITOS)
         document.getElementById('inpBuscadorCod').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const codigo = this.value.trim();
                 const modulo = document.getElementById('selModuloKiosco').value;
-                const cantPeso = parseFloat(document.getElementById('inpPesoManual').value) || 1;
+                const cant = parseFloat(document.getElementById('inpPesoManual').value) || 1;
 
                 if (!codigo) return;
 
-                const catalogo = PRODUCTOS_MUESTRA[modulo];
+                const catalogo = PRODUCTOS_MUESTRA[modulo] || [];
                 const producto = catalogo.find(p => p.cod === codigo);
 
                 if (producto) {
-                    const itemExistente = CARRITO_ACTUAL.find(item => item.cod === producto.cod);
-                    if (itemExistente) { itemExistente.cantidad += cantPeso; } 
-                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cantPeso, modulo: modulo }); }
+                    const item = CARRITO_ACTUAL.find(i => i.cod === producto.cod);
+                    if (item) { item.cantidad += cant; } 
+                    else { CARRITO_ACTUAL.push({ ...producto, cantidad: cant, modulo: modulo }); }
                     renderizarCarrito();
                 } else {
-                    alert("🚨 Producto no registrado en simulación offline.");
+                    alert("🚨 Código no registrado en simulación offline.");
                 }
-                this.value = ""; 
+                this.value = "";
+                document.getElementById('inpPesoManual').value = "1";
             }
         });
 
@@ -737,7 +726,7 @@
             caja.innerHTML = "";
             let usd = 0;
 
-            if (CARRITO_ACTUAL.length === 0) {
+                       if (CARRITO_ACTUAL.length === 0) {
                 caja.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">Monitor vacío. Pase mercancía.</div>';
                 document.getElementById('lblTotalUsd').innerText = "$ 0.00";
                 document.getElementById('lblTotalBs').innerText = "Bs. 0.00";
@@ -749,7 +738,7 @@
                 usd += total;
                 caja.innerHTML += `
                     <div class="item-row">
-                        <div><strong>${item.nombre}</strong><br><span style="color:#aaa; font-size:12px;">${item.cantidad.toFixed(2)} x $${item.precio.toFixed(2)}</span></div>
+                        <div><strong>${item.nombre}</strong><br><span style="color:#aaa; font-size:12px;">${item.cantidad} x $${item.precio.toFixed(2)}</span></div>
                         <div><span style="font-weight:bold; color:#fff; margin-right:15px;">$${total.toFixed(2)}</span><button class="btn-delete-item" onclick="eliminarItemCarro(${index})">✕</button></div>
                     </div>`;
             });
@@ -763,62 +752,71 @@
             if (pin === "123456") { CARRITO_ACTUAL.splice(index, 1); renderizarCarrito(); }
         }
 
+        function resguardarVentaEnCola(datosVenta) {
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            cola.push(datosVenta);
+            localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
+            verificarContadorCola();
+        }
+
+        function verificarContadorCola() {
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            const alerta = document.getElementById('syncAlert');
+            const contador = document.getElementById('queueCount');
+            if (cola.length > 0) { alerta.style.display = "block"; contador.innerText = cola.length; } 
+            else if (IS_ONLINE) { alerta.style.display = "none"; }
+        }
+
+        function procesarColaEspera() {
+            if (!navigator.onLine || WEB_APP_URL.includes("INTRODUCE_AQUI")) return;
+            let cola = JSON.parse(localStorage.getItem('cola_ventas_chamo')) || [];
+            if (cola.length === 0) return;
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(cola)
+            }).then(() => {
+                cola.shift();
+                localStorage.setItem('cola_ventas_chamo', JSON.stringify(cola));
+                verificarContadorCola();
+                procesarColaEspera();
+            });
+        }
+
         function procesarPagoCobro() {
             if(CARRITO_ACTUAL.length === 0) return;
             const usd = parseFloat(document.getElementById('lblTotalUsd').innerText.replace("$ ", ""));
-            const metodo = document.getElementById('selMetodoPago').value;
 
             const datosVenta = {
-                accion: "procesarVentaKio",
-                idSucursal: "KIO-01",
-                operador: "Caja #1",
-                tasaCambio: TASA_CAMBIO_FIJA,
-                metodoPago: metodo,
-                totalUsd: usd,
-                carrito: CARRITO_ACTUAL,
-                pagadoUsd: metodo === "Efectivo_Dolar" ? usd : 0,
-                pagadoBs: metodo !== "Efectivo_Dolar" ? (usd * TASA_CAMBIO_FIJA) : 0,
-                vuelto: 0
+                accion: "procesarVentaKio", idSucursal: SUCURSAL_ID, operador: "Cajero",
+                tasaChange: TASA_CAMBIO_FIJA, totalUsd: usd, carrito: CARRITO_ACTUAL,
+                metodoPago: document.getElementById('selMetodoPago').value
             };
 
-                    if (navigator.onLine) {
-                fetch(WEB_APP_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(datosVenta)
-                }).then(() => {
-                    alert("✅ Venta procesada online y guardada en la Nube.");
-                }).catch(() => {
-                    resguardarVentaEnCola(datosVenta);
-                    alert("⚠️ Red inestable. Venta resguardada en la PC. Se sincronizará sola al volver la señal.");
-                });
+            if (navigator.onLine && !WEB_APP_URL.includes("INTRODUCE_AQUI")) {
+                fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datosVenta) })
+                .then(() => alert("✅ Venta procesada online en la Nube."))
+                .catch(() => { resguardarVentaEnCola(datosVenta); alert("⚠️ Red inestable. Factura guardada en la PC."); });
             } else {
                 resguardarVentaEnCola(datosVenta);
-                alert("💾 MODALIDAD OFFLINE: Venta guardada en la memoria local de la PC de forma segura.");
+                alert("💾 MODALIDAD OFFLINE: Venta resguardada en disco local de forma segura.");
             }
 
-            // Disparar la orden física de impresión (Aprovecha la PWA para imprimir sin internet)
-            if (document.getElementById('swImpresionAuto').checked) {
-                window.print();
-            }
-
+            if (document.getElementById('swImpresionAuto').checked) { window.print(); }
             CARRITO_ACTUAL = [];
             renderizarCarrito();
         }
 
-        function cambiarModuloLógica() {}
-        function controlSwBloqueoLocal() { if (document.getElementById('swBloqueoLocal').checked) document.getElementById('capaBloqueoLocal').style.display = 'flex'; }
-        function verificarDesbloqueoLocal() { if (document.getElementById('inpPinDesbloqueo').value === "123456") { document.getElementById('capaBloqueoLocal').style.display = 'none'; document.getElementById('swBloqueoLocal').checked = false; document.getElementById('inpPinDesbloqueo').value = ""; } }
         function gestionarCaja(accion) { alert(accion === 'abrir' ? "Caja iniciada." : "Caja cerrada."); }
 
-        // Inicializar revisando el estatus de la red en Venezuela
+        // Cronómetro automático de fondo (Revisa cada 5 segundos)
+        setInterval(descargarConfiguracionNube, 5000);
+
         actualizarEstadoRed();
-        renderizarCarrito();
     </script>
 </body>
 </html>
-
-            
-            
+    
             
