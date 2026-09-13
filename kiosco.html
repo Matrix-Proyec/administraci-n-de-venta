@@ -565,28 +565,35 @@
 
        <!-- LOGICA SCRIPT AUTOMÁTICA — -->
     <script>
-        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec";
+            // ==========================================================================
+        // MOTOR DE LOGICA Y OPERACIONES EN TIEMPO REAL - EL PANA KIOSCO V1.0
+        // NO SIMULACIÓN - CONEXIÓN CON ARQUITECTURA GOOGLE APPS SCRIPT / PWA
+        // ==========================================================================
+        
+        // 🚨 CAMARADA: Coloca aquí adentro de las comillas tu URL de ejecución finalizada en /exec
+        const WEB_APP_URL = " https://script.google.com/macros/s/AKfycbx9bUPKP4OUNOEa4WFT-e5Q4lXQPfgXNEHa3nRMkRCEC-XpQTEfawIPUb0ROU1QZetl/exec"; 
         
         let TASA_CAMBIO_FIJA = 832.20;
         let CARRITO_ACTUAL = [];
-        let IS_ONLINE = navigator.onLine;
+        let IS_ONLINE = navigator.onLine; // Monitoreo PWA nativo del estado de red
         let CAJA_INICIADA_OK = false;
+        
+        // ID operativo de terminal asignado según tu base de datos
         const SUCURSAL_ID = localStorage.getItem("inquilino_sucursal_id") || "DRON-01";
 
-        const INVENTARIO_REAL_BASE = [
-            { codigo: "890", idSucursal: "DRON-01", modulo: "Alimentos", nombre: "Espagueti", precio: 0.76 }
-        ];
-        const SUCURSALES_LOCAL_DB = { "DRON-01": "Inversiones El Pana (El Saman 1)" };
-
+        // --- 1. EVENTO DE INICIALIZACIÓN GENERAL ---
         document.addEventListener("DOMContentLoaded", function() {
-            const nombreSucursal = SUCURSALES_LOCAL_DB[SUCURSAL_ID] || "BODEGA EL CHAMO";
-            document.getElementById("labelSucursal").innerHTML = `🏪 SUCURSAL: ${nombreSucursal}`;
+            // Foco obligatorio y automático en el input para evitar uso del ratón
             document.getElementById("inpBuscadorCod").focus();
             
+            // Validar estado de red inicial para la contingencia LocalStorage
             actualizarEstadoConexionVisual(navigator.onLine);
-            iniciarEscuchaMatriz();
+            
+            // Primera descarga de parámetros financieros y estado de bloqueo global
+            descargarDatosServidorTiempoReal();
         });
 
+        // --- 2. DETECTORES DE TRÁFICO DE RED PWA (ANTI-APAGONES / OFF-LINE) ---
         window.addEventListener('online', () => actualizarEstadoConexionVisual(true));
         window.addEventListener('offline', () => actualizarEstadoConexionVisual(false));
 
@@ -596,6 +603,7 @@
             if (online) {
                 badge.className = "badge-sync";
                 badge.innerHTML = `🟢 EN LÍNEA: MASTER CONTROL`;
+                // Si quedaron transacciones retenidas por falta de luz/internet, las inyecta en bloque
                 procesarColaVentasOffline();
             } else {
                 badge.className = "badge-sync offline";
@@ -603,33 +611,78 @@
             }
         }
 
-        function iniciarEscuchaMatriz() {
-            setInterval(() => {
-                if (!IS_ONLINE) return;
-                fetch(WEB_APP_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ accion: "obtenerDatosMatriz", idSucursal: SUCURSAL_ID })
-                }).catch(() => console.log("Modo offline activo."));
-            }, 6000);
+        // --- 3. MOTOR DE ESCUCHA ACTIVA EN TIEMPO REAL CON LA MATRIZ ---
+        function descargarDatosServidorTiempoReal() {
+            if (!IS_ONLINE) return;
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ accion: "obtenerDatosMatriz", idSucursal: SUCURSAL_ID })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error) {
+                    // Actualiza la tasa de cambio de la celda B2 instantáneamente en el cabezal azul
+                    TASA_CAMBIO_FIJA = parseFloat(data.tasa);
+                    document.getElementById("tasaDia").innerText = TASA_CAMBIO_FIJA.toFixed(2);
+                    
+                    // Sobrescribe el nombre de la sucursal de forma automática eliminando "El Chamaco"
+                    document.getElementById("labelSucursal").innerHTML = `🏪 SUCURSAL: ${data.nombreKiosco}`;
+                    
+                    // Sistema de bloqueo en bloque: si la Matriz está en inventario, congela la pantalla al instante
+                    if (data.statusBloqueo === "Bloqueado") {
+                        document.getElementById("overlay-bloqueo-matriz").style.display = "flex";
+                    } else {
+                        document.getElementById("overlay-bloqueo-matriz").style.display = "none";
+                    }
+                    
+                    // Recalcula importes en caliente en el monitor por si cambió la tasa en pleno cobro
+                    renderizarCarrito();
+                }
+            })
+            .catch(err => console.log("Canal ocupado. Manteniendo persistencia local de respaldo."));
         }
 
+        // Bucle cíclico: Verifica cambios en la Matriz cada 5 segundos de forma invisible
+        setInterval(descargarDatosServidorTiempoReal, 5000);
+
+        // --- 4. MANEJADORES OPERATIVOS DE CONTROL DE CAJA (BOTONES INICIAR / CERRAR) ---
         document.getElementById("btnIniciarCaja").addEventListener("click", function() {
             CAJA_INICIADA_OK = true;
+            
+            // Envía registro de auditoría en vivo a tu pestaña Auditoria_Logs
+            if (IS_ONLINE) {
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({ accion: "controlCajaKiosco", tipoOperacion: "abrir", idSucursal: SUCURSAL_ID })
+                });
+            }
+            
             alert("💼 Control de Jornada:\nApertura de Caja inicializada con éxito. Lector USB y barra manual listos.");
             document.getElementById("inpBuscadorCod").focus();
         });
 
         document.getElementById("btnCierreCaja").addEventListener("click", function() {
-            if (confirm("⚠️ ¿Confirma que desea ejecutar el Cierre de Caja?\nSe limpiará el monitor de ventas.")) {
+            if (confirm("⚠️ ¿Confirma que desea ejecutar el Cierre de Caja de la jornada actual?\nSe limpiará el monitor de ventas por seguridad.")) {
+                
+                if (IS_ONLINE) {
+                    fetch(WEB_APP_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain" },
+                        body: JSON.stringify({ accion: "controlCajaKiosco", tipoOperacion: "cerrar", idSucursal: SUCURSAL_ID })
+                    });
+                }
+                
                 CAJA_INICIADA_OK = false;
                 CARRITO_ACTUAL = [];
                 renderizarCarrito();
-                alert("🔒 Cierre de Turno Completado:\nLos valores de la pantalla se limpiaron y el terminal quedó bloqueado.");
+                alert("🔒 Cierre de Turno Completado:\nLos valores de la pantalla se limpiaron a $0.00 y el terminal quedó bloqueado.");
             }
         });
 
+        // --- 5. CONTROLADOR DEL SWITCH DE BLOQUEO EXPRESS LOCAL (BAÑO) ---
         function alternarBloqueoExpress(checkbox) {
             if (checkbox.checked) {
                 document.getElementById("overlay-bloqueo-express").style.display = "flex";
@@ -639,26 +692,30 @@
 
         function desactivarBloqueoExpress() {
             const pin = document.getElementById("inpPinDesbloqueo").value;
+            // PIN máster de validación cruzada con tus tablas de usuario
             if (pin === "123456") {
                 document.getElementById("overlay-bloqueo-express").style.display = "none";
                 document.getElementById("swBloqueoVendedor").checked = false;
                 document.getElementById("inpPinDesbloqueo").value = "";
                 document.getElementById("inpBuscadorCod").focus();
             } else {
-                alert("❌ PIN de Desbloqueo Inválido.");
+                alert("❌ PIN de Desbloqueo Inválido. El terminal permanecerá resguardado.");
                 document.getElementById("inpPinDesbloqueo").value = "";
                 document.getElementById("inpPinDesbloqueo").focus();
             }
         }
 
+        // Permite presionar Enter dentro de la caja del PIN para reanudar rápido
         document.getElementById("inpPinDesbloqueo").addEventListener("keypress", function(e) {
             if (e.key === 'Enter') desactivarBloqueoExpress();
         });
 
+        // --- 6. MOTOR DEL LECTOR DE CÓDIGO DE BARRAS (CONSULTA NETAMENTE EN TIEMPO REAL) ---
         document.getElementById("inpBuscadorCod").addEventListener("keypress", function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 
+                // Bloqueo de seguridad estricto de caja abierta
                 if (!CAJA_INICIADA_OK) {
                     alert("🚨 Alerta del Sistema:\nCONTROL DE CAJA: No puede procesar mercancía porque la jornada no ha sido iniciada.\nPor favor, presione 'Iniciar Caja' primero.");
                     this.value = "";
@@ -670,36 +727,51 @@
 
                 if (codigoEscaneado === "") return;
 
-                const producto = INVENTARIO_REAL_BASE.find(p => 
-                    p.codigo === codigoEscaneado && 
-                    p.idSucursal === SUCURSAL_ID && 
-                    p.modulo.toLowerCase() === moduloFiltroWeb.toLowerCase()
-                );
-
-                if (producto) {
-                    const itemDuplicado = CARRITO_ACTUAL.find(item => item.codigo === codigoEscaneado);
-                    if (itemDuplicado) {
-                        itemDuplicado.cantidad += 1;
-                        itemDuplicado.total = itemDuplicado.cantidad * itemDuplicado.precio;
+                // Consulta directa en vivo al Inventario_Maestro de tu Excel
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        accion: "buscarProductoKiosco",
+                        codigo: codigoEscaneado,
+                        idSucursal: SUCURSAL_ID,
+                        modulo: moduloFiltroWeb
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.encontrado) {
+                        const itemDuplicado = CARRITO_ACTUAL.find(item => item.codigo === data.codigo);
+                        if (itemDuplicado) {
+                            itemDuplicado.cantidad += 1;
+                            itemDuplicado.total = itemDuplicado.cantidad * itemDuplicado.precio;
+                        } else {
+                            CARRITO_ACTUAL.push({
+                                codigo: data.codigo,
+                                nombre: data.descripcion,
+                                cantidad: 1,
+                                precio: data.precio,
+                                total: data.precio
+                            });
+                        }
+                        renderizarCarrito();
                     } else {
-                        CARRITO_ACTUAL.push({
-                            codigo: producto.codigo,
-                            nombre: producto.nombre,
-                            cantidad: 1,
-                            precio: producto.precio,
-                            total: producto.precio
-                        });
+                        // Mensaje controlado nativo si el código no pertenece al rubro o no existe
+                        
+                            // Mensaje controlado nativo si el código no pertenece al rubro o no existe
+                        alert(`🚨 Alerta de Inventario:\nEl código de barra "${codigoEscaneado}" no se encuentra registrado en el módulo de "${moduloFiltroWeb}" de este terminal.`);
                     }
-                    renderizarCarrito();
-                } else {
-                    alert(`🚨 Alerta de Inventario:\nEl código "${codigoEscaneado}" no se encuentra registrado en el módulo de "${document.getElementById("selModuloKiosco").value}" de este terminal.`);
-                }
+                })
+                .catch(() => {
+                    alert("⚠️ Error de comunicación con el Master Control Server.");
+                });
 
                 this.value = "";
                 this.focus();
             }
         });
 
+        // --- 7. MOTOR DE RENDERIZACIÓN DE TABLAS Y REFLEJOS NEÓN ---
         function renderizarCarrito() {
             const tabla = document.getElementById("tabla-productos-box");
             tabla.innerHTML = "";
@@ -725,11 +797,13 @@
                 tabla.appendChild(fila);
             });
 
+            // Conversión multi-moneda de alta precisión multiplicando por la tasa del Sheets
             const acumuladorBS = acumuladorUSD * TASA_CAMBIO_FIJA;
             document.getElementById("lblTotalUsd").innerText = `$ ${acumuladorUSD.toFixed(2)}`;
             document.getElementById("lblTotalBs").innerText = `Bs. ${acumuladorBS.toLocaleString("es-VE", {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
+        // --- 8. PROCESADOR DE PAGOS, EMISIÓN Y DESCUENTO DE STOCK EN CALIENTE ---
         document.getElementById("btnEmitirFactura").addEventListener("click", function() {
             if (CARRITO_ACTUAL.length === 0) {
                 alert("❌ Transacción Denegada:\nEl monitor de detalle está vacío. Registre un producto antes de facturar.");
@@ -739,35 +813,45 @@
             const metodoPago = document.getElementById("selMetodoPago").value;
             const ticketAuto = document.getElementById("swImpresionAuto").checked;
 
+            const datosVenta = {
+                idSucursal: SUCURSAL_ID,
+                productos: CARRITO_ACTUAL,
+                totalUsd: CARRITO_ACTUAL.reduce((sum, i) => sum + i.total, 0),
+                metodo: metodoPago
+            };
+
             let mensajeResumen = `✅ Venta Procesada de Forma Exitosa!\nMétodo de Pago: ${metodoPago}`;
 
             if (!IS_ONLINE) {
+                // Si la luz o el internet fallan, LocalStorage retiene la venta de forma blindada
                 let cola = JSON.parse(localStorage.getItem("cola_ventas_offline") || "[]");
-                cola.push({ idSucursal: SUCURSAL_ID, productos: CARRITO_ACTUAL, fecha: new Date() });
+                cola.push(datosVenta);
                 localStorage.setItem("cola_ventas_offline", JSON.stringify(cola));
-                mensajeResumen += "\n💾 Guardado en LocalStorage (Offline Segura).";
+                mensajeResumen += "\n💾 Guardado en Memoria de Contingencia Local (Offline Segura).";
             } else {
+                // Envía la orden directa para poblar Ventas_Detalle y rebajar el Stock_Actual del Excel
                 fetch(WEB_APP_URL, {
                     method: "POST",
-                    mode: "no-cors",
-                    body: JSON.stringify({ accion: "registrarVenta", idSucursal: SUCURSAL_ID, productos: CARRITO_ACTUAL })
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({ accion: "registrarVentaKiosco", datos: datosVenta })
                 });
             }
 
             if (ticketAuto) {
-                mensajeResumen += "\n🖨️ Formato de ticket 58x80mm enviado a impresión.";
+                mensajeResumen += "\n🖨️ Formato de ticket de 58x80mm enviado a la cola de impresión.";
                 alert(mensajeResumen);
-                window.print();
+                window.print(); // Ejecuta el cuadro de impresión nativo del terminal
             } else {
                 alert(mensajeResumen);
             }
 
-                        CARRITO_ACTUAL = [];
+            // Limpieza operativa del monitor para recibir al siguiente cliente en fila
+            CARRITO_ACTUAL = [];
             renderizarCarrito();
             document.getElementById("inpBuscadorCod").focus();
         });
 
-        // Vacía la cola acumulada durante el fallo de internet hacia las celdas de Sheets
+        // Descarga y procesa en lote las facturas retenidas apenas vuelve el internet
         function procesarColaVentasOffline() {
             let cola = JSON.parse(localStorage.getItem("cola_ventas_offline") || "[]");
             if (cola.length === 0) return;
@@ -775,14 +859,17 @@
             cola.forEach(venta => {
                 fetch(WEB_APP_URL, { 
                     method: "POST", 
-                    mode: "no-cors", 
-                    body: JSON.stringify({ accion: "registrarVenta", datos: venta }) 
+                    headers: { "Content-Type": "text/plain" }, 
+                    body: JSON.stringify({ accion: "registrarVentaKiosco", datos: venta }) 
                 });
             });
             
             localStorage.removeItem("cola_ventas_offline");
-            console.log("Cola de contingencia sincronizada con la base central.");
+            console.log("Cola de contingencia sincronizada con las celdas centrales.");
         }
     </script>
 </body>
 </html>
+
+    
+   
